@@ -9,4 +9,7 @@
         functionality.</string>
     <string name="settings">Settings</string>
     <string name="loading_location">Đang tìm vị trí vui lòng chờ...</string>
+    <string name="message_get_location_success">"Xác thực thành công."</string>
+    <string name="message_get_location_error">"Lấy vị trí không thành công"</string>
+    <string name="loading_wifi">Đang tìm wifi xung quanh vui lòng chờ...</string>
 </resources>
