@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication;
+package com.example.tvofaceidapplication.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.example.tvofaceidapplication.R;
 
 public class LendingActivity extends AppCompatActivity {
 
