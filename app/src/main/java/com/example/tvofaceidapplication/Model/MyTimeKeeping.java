@@ -1,9 +1,14 @@
 package com.example.tvofaceidapplication.Model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class MyTimeKeeping {
 
     private String employee_id, location_id, created_at;
 
+    public MyTimeKeeping() {
+    }
 
     public MyTimeKeeping(String employee_id, String location_id, String created_at) {
         this.employee_id = employee_id;

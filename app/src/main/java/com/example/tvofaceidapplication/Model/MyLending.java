@@ -1,8 +1,14 @@
 package com.example.tvofaceidapplication.Model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class MyLending {
 
     private String name, address, phone, job, image, cmnd_1, cmnd_2, created_at;
+
+    public MyLending() {
+    }
 
     public MyLending(String name, String address, String phone, String job, String image, String cmnd_1, String cmnd_2, String created_at) {
         this.name = name;

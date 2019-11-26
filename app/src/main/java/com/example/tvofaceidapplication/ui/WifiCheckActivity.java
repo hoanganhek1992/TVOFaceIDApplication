@@ -174,8 +174,6 @@ public class WifiCheckActivity extends AppCompatActivity {
                         showAlertDialogSuccess();
                         break;
                     }
-                    else{
-                    }
                 }
             }
 

@@ -1,7 +1,13 @@
 package com.example.tvofaceidapplication.Model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class MyEmployee {
     private String name, image;
+
+    public MyEmployee() {
+    }
 
     public MyEmployee(String name, String image) {
         this.name = name;

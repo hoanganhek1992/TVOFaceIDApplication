@@ -2,8 +2,11 @@ package com.example.tvofaceidapplication.Model;
 
 import android.location.Location;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.io.Serializable;
 
+@IgnoreExtraProperties
 public class MyLocation implements Serializable {
     private String wifi_ssid;
     private Location location;

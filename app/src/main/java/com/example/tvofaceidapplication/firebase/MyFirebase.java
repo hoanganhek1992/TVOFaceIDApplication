@@ -37,7 +37,7 @@ public class MyFirebase {
         this.mDatabase = mDatabase;
     }
 
-    public void addEmployee(MyEmployee employee, final EmployeeCallback callback) {
+    public void addEmployee(MyEmployee employee, final AddEmployeeCallback callback) {
         mDatabase.collection(TABLE_EMPLOYEE).document(System.currentTimeMillis() + "").set(employee).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -46,7 +46,7 @@ public class MyFirebase {
         });
     }
 
-    public void getEmployee(final EmployeeCallback callback) {
+    public void getEmployee(final GetEmployeeCallback callback) {
         mDatabase.collection(TABLE_EMPLOYEE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -65,10 +65,13 @@ public class MyFirebase {
     }
 
 
-    public interface EmployeeCallback {
+    public interface AddEmployeeCallback {
 
         void onAddEmployeeSuccess();
 
+    }
+
+    public interface GetEmployeeCallback {
         void onGetEmployeeSuccess(List<MyEmployee> list);
 
         void onGetEmployeeError(Exception err);
@@ -81,6 +84,7 @@ public class MyFirebase {
 
     public interface LocationCallback {
         void onGetLocationSuccess(List<MyLocation> list);
+        void onGetLocationError(Exception err);
     }
 
     public interface TimeKeepingCallback {
