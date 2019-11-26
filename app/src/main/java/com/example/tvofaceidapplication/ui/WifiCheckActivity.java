@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.Model.MyResource;
+import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
@@ -37,7 +37,7 @@ public class WifiCheckActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     WifiReceiver receiverWifi;
-    MyResource mMyResource;
+    MyLocation mMyLocation;
     ProgressDialog progressDialog;
     MyApplication myApplication;
     AlertDialog successDialog;
@@ -49,7 +49,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_check);
         myApplication = MyApplication.getInstance();
-        mMyResource = myApplication.getmCurrentResource();
+        mMyLocation = myApplication.getmCurrentResource();
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         assert wifiManager != null;
         if (!wifiManager.isWifiEnabled()) {
@@ -113,7 +113,7 @@ public class WifiCheckActivity extends AppCompatActivity {
     public void showAlertDialogSuccess(){
         try {
             timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
-            txtWifiname.setText(mMyResource.getWifiname());
+            txtWifiname.setText(mMyLocation.getWifi_ssid());
             successDialog.show();
         } catch (Exception ignored) {
         }
@@ -123,9 +123,12 @@ public class WifiCheckActivity extends AppCompatActivity {
     public void showAlertDialogAllSuccess(){
         try {
             timeCurrent2.setText("Thời gian: "+ DateFormat.getTimeInstance().format(new Date()));
-            name.setText(mMyResource.getName());
-            nameLocation.setText(mMyResource.getNameLocation());
-            txtWifiname2.setText(mMyResource.getWifiname());
+
+            //Need update
+            name.setText(mMyLocation.getName());
+
+            nameLocation.setText(mMyLocation.getName());
+            txtWifiname2.setText(mMyLocation.getWifi_ssid());
             alertDialogAll.show();
         } catch (Exception ignored) {
         }

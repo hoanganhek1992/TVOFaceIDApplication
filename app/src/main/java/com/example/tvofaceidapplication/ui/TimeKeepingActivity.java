@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.tvofaceidapplication.BuildConfig;
-import com.example.tvofaceidapplication.Model.MyResource;
+import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.google.android.gms.common.api.ApiException;
@@ -71,7 +71,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     Location location;
 
     MyApplication myApplication;
-    private List<MyResource> myResources = new ArrayList<>();
+    private List<MyLocation> myLocations = new ArrayList<>();
 
     /*Dialog*/
     ProgressDialog progressDialog;
@@ -143,7 +143,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
             Location resourceLocation = new Location("");
             resourceLocation.setLatitude(lat);
             resourceLocation.setLongitude(lng);
-            myResources.add(new MyResource("TVOHCM_Delivery", resourceLocation, "Tinh Vân Outsourcing", "Nguyen Văn A"));
+            myLocations.add(new MyLocation("TVOHCM_Delivery", resourceLocation, "Tinh Vân Outsourcing", "Nguyen Văn A"));
             lat += 0.1;
             lng += 0.1;
         }
@@ -154,7 +154,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     public void showAlertDialogSuccess() {
         try {
             timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
-            locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentResource().getNameLocation());
+            locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentResource().getName());
             successDialog.show();
         } catch (Exception ignored) {
         }
@@ -244,13 +244,13 @@ public class TimeKeepingActivity extends AppCompatActivity {
                 super.onLocationResult(locationResult);
                 location = locationResult.getLastLocation();
                 if (location != null) {
-                    for (int i = 0; i < myResources.size(); i++) {
+                    for (int i = 0; i < myLocations.size(); i++) {
                         if (mCount < mMaxRepeat) {
-                            if (calculateDistance(myResources.get(i).getLocation(), location) < 1000) {
+                            if (calculateDistance(myLocations.get(i).getLocation(), location) < 1000) {
                                 stopLocationUpdates();
                                 mCount = 0;
                                 progressDialog.dismiss();
-                                myApplication.setmCurrentResource(myResources.get(i));
+                                myApplication.setmCurrentResource(myLocations.get(i));
                                 showAlertDialogSuccess();
                             } else {
                                 mCount++;

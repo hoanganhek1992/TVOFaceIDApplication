@@ -2,12 +2,12 @@ package com.example.tvofaceidapplication;
 
 import android.app.Application;
 
-import com.example.tvofaceidapplication.Model.MyResource;
+import com.example.tvofaceidapplication.Model.MyLocation;
 
 public class MyApplication extends Application {
 
     private static MyApplication myApplication;
-    MyResource mCurrentResource;
+    MyLocation mCurrentResource;
 
     public static MyApplication getInstance(){
         if(myApplication == null){
@@ -20,11 +20,11 @@ public class MyApplication extends Application {
         super.onCreate();
     }
 
-    public MyResource getmCurrentResource() {
+    public MyLocation getmCurrentResource() {
         return mCurrentResource;
     }
 
-    public void setmCurrentResource(MyResource mCurrentResource) {
+    public void setmCurrentResource(MyLocation mCurrentResource) {
         this.mCurrentResource = mCurrentResource;
     }
 }
