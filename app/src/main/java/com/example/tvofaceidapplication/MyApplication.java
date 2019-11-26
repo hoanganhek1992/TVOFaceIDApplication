@@ -2,6 +2,8 @@ package com.example.tvofaceidapplication;
 
 import android.app.Application;
 
+import com.example.tvofaceidapplication.Model.MyResource;
+
 public class MyApplication extends Application {
 
     private static MyApplication myApplication;

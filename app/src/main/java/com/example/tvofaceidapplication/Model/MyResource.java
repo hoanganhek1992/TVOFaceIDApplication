@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication;
+package com.example.tvofaceidapplication.Model;
 
 import android.location.Location;
 import android.os.Parcel;

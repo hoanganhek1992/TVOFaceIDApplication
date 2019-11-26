@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication;
+package com.example.tvofaceidapplication.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -19,12 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
+import com.example.tvofaceidapplication.BuildConfig;
+import com.example.tvofaceidapplication.Model.MyResource;
+import com.example.tvofaceidapplication.MyApplication;
+import com.example.tvofaceidapplication.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -48,22 +50,21 @@ import java.util.Date;
 import java.util.List;
 
 public class TimeKeepingActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = TimeKeepingActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private SettingsClient mSettingsClient;
-    private LocationRequest mLocationRequest;
-    private LocationSettingsRequest mLocationSettingsRequest;
-    private LocationCallback mLocationCallback;
-    private Boolean mRequestingLocationUpdates = false;
+    protected FusedLocationProviderClient mFusedLocationClient;
+    protected SettingsClient mSettingsClient;
+    protected LocationRequest mLocationRequest;
+    protected LocationSettingsRequest mLocationSettingsRequest;
+    protected LocationCallback mLocationCallback;
+    protected Boolean mRequestingLocationUpdates = false;
 
 
     TextView updateTime;
-    ProgressDialog progressDialog;
     boolean isLoading = false;
     int mCount = 0;
     final int mMaxRepeat = 10;
@@ -71,18 +72,68 @@ public class TimeKeepingActivity extends AppCompatActivity {
 
     MyApplication myApplication;
     private List<MyResource> myResources = new ArrayList<>();
+
+    /*Dialog*/
+    ProgressDialog progressDialog;
+    AlertDialog successDialog;
+    AlertDialog errorDialog;
+    TextView timeCurrent;
+    TextView locationCurrent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_keeping);
         myApplication = MyApplication.getInstance();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(R.string.loading_location);
-        progressDialog.setCanceledOnTouchOutside(false);
+
         updateTime = findViewById(R.id.txtTimeCurent);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
         createExampleData();
+
+        createDialogData();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void createDialogData() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.loading_location);
+        progressDialog.setCanceledOnTouchOutside(false);
+
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View viewError = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
+        builder.setView(viewError);
+        errorDialog = builder.create();
+
+        View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
+        timeCurrent = viewSuccess.findViewById(R.id.txtTimeCurent);
+        locationCurrent = viewSuccess.findViewById(R.id.txtLocation);
+        builder.setView(viewSuccess);
+        successDialog = builder.create();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions()) {
+            startLocationUpdates();
+        } else if (!checkPermissions()) {
+            requestPermissions();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        successDialog.dismiss();
     }
 
     private void createExampleData() {
@@ -101,81 +152,64 @@ public class TimeKeepingActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void showAlertDialogSuccess() {
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
-        TextView timeCurrent = dialogView.findViewById(R.id.txtTimeCurent);
-        TextView locationCurrent = dialogView.findViewById(R.id.txtLocation);
-        timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
-        for (int i = 0; i < myResources.size(); i++) {
-            if (calculateDistance(myResources.get(i).getLocation(), location) < 1000) {
-                locationCurrent.setText("Địa chỉ: " + myResources.get(i).getNameLocation());
-
-            }
+        try {
+            timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
+            locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentResource().getNameLocation());
+            successDialog.show();
+        } catch (Exception ignored) {
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
     }
 
 
     public void showAlertDialogError() {
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
+        try {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            errorDialog.show();
+        } catch (Exception ignored) {
+        }
     }
+
     private void showLoading() {
+        if (successDialog != null && successDialog.isShowing()) {
+            successDialog.dismiss();
+        }
         progressDialog.show();
     }
+
     private Float calculateDistance(Location currentLocation, Location newLocation) {
         return currentLocation.distanceTo(newLocation);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
-                        mRequestingLocationUpdates = false;
-                        break;
-                }
-                break;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    Log.i(TAG, "User agreed to make required location settings changes.");
+                    break;
+                case Activity.RESULT_CANCELED:
+                    Log.i(TAG, "User chose not to make required location settings changes.");
+                    mRequestingLocationUpdates = false;
+                    break;
+            }
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (checkPermissions()) {
-            startLocationUpdates();
-        } else if (!checkPermissions()) {
-            requestPermissions();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     public void startSuccess(View view) {
         if (myApplication.getmCurrentResource() != null) {
+            successDialog.dismiss();
             Intent intent = new Intent(TimeKeepingActivity.this, WifiCheckActivity.class);
             startActivity(intent);
         }
     }
 
     public void startError(View view) {
+        if (errorDialog != null && errorDialog.isShowing()) {
+            errorDialog.dismiss();
+        }
         startLocationUpdates();
     }
 

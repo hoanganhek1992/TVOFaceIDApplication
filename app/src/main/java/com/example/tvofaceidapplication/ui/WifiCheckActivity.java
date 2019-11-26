@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication;
+package com.example.tvofaceidapplication.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +21,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tvofaceidapplication.MainActivity;
+import com.example.tvofaceidapplication.Model.MyResource;
+import com.example.tvofaceidapplication.MyApplication;
+import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
 
 
@@ -36,21 +40,23 @@ public class WifiCheckActivity extends AppCompatActivity {
     MyResource mMyResource;
     ProgressDialog progressDialog;
     MyApplication myApplication;
+    AlertDialog successDialog;
+    AlertDialog errorDialog;
+    AlertDialog alertDialogAll;
+    TextView timeCurrent,txtWifiname,name,nameLocation,timeCurrent2,txtWifiname2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_check);
         myApplication = MyApplication.getInstance();
         mMyResource = myApplication.getmCurrentResource();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(R.string.loading_wifi);
-        progressDialog.setCanceledOnTouchOutside(false);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         assert wifiManager != null;
         if (!wifiManager.isWifiEnabled()) {
             Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
         }
+        createDialogData();
     }
 
     @Override
@@ -59,58 +65,99 @@ public class WifiCheckActivity extends AppCompatActivity {
         showLoading();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        successDialog.dismiss();
+    }
+
+    @SuppressLint({"SetTextI18n", "CutPasteId"})
+    private void createDialogData() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.loading_wifi);
+        progressDialog.setCanceledOnTouchOutside(false);
+
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View viewError = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
+        builder.setView(viewError);
+        errorDialog = builder.create();
+
+
+        View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
+        timeCurrent = viewSuccess.findViewById(R.id.txtTimeCurent);
+        txtWifiname =viewSuccess.findViewById(R.id.txtLocation);
+        builder.setView(viewSuccess);
+        successDialog = builder.create();
+
+
+        View viewAll = LayoutInflater.from(this).inflate(R.layout.notification_all_success, viewGroup, false);
+        timeCurrent2 = viewAll.findViewById(R.id.txtTime);
+        name = viewAll.findViewById(R.id.txtName);
+        nameLocation = viewAll.findViewById(R.id.txtLocation);
+        txtWifiname2 = viewAll.findViewById(R.id.txtWifiName);
+        builder.setView(viewAll);
+        alertDialogAll = builder.create();
+    }
+
+
+
     private void showLoading() {
+        if (successDialog != null && successDialog.isShowing()) {
+            successDialog.dismiss();
+        }
         progressDialog.show();
     }
     @SuppressLint("SetTextI18n")
     public void showAlertDialogSuccess(){
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
-        TextView timeCurrent = dialogView.findViewById(R.id.txtTimeCurent);
-        timeCurrent.setText("Wifi:" + mMyResource.getWifiname());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        try {
+            timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
+            txtWifiname.setText(mMyResource.getWifiname());
+            successDialog.show();
+        } catch (Exception ignored) {
+        }
     }
 
     @SuppressLint("SetTextI18n")
     public void showAlertDialogAllSuccess(){
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.notification_all_success, viewGroup, false);
-        TextView timeCurrent = dialogView.findViewById(R.id.txtTime);
-        timeCurrent.setText("Thời gian: "+ DateFormat.getTimeInstance().format(new Date()));
-        TextView name = dialogView.findViewById(R.id.txtName);
-        name.setText(mMyResource.getName());
-        TextView nameLocation = dialogView.findViewById(R.id.txtLocation);
-        nameLocation.setText(mMyResource.getNameLocation());
-        TextView nameWifi = dialogView.findViewById(R.id.txtWifiName);
-        nameWifi.setText(mMyResource.getWifiname());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        try {
+            timeCurrent2.setText("Thời gian: "+ DateFormat.getTimeInstance().format(new Date()));
+            name.setText(mMyResource.getName());
+            nameLocation.setText(mMyResource.getNameLocation());
+            txtWifiname2.setText(mMyResource.getWifiname());
+            alertDialogAll.show();
+        } catch (Exception ignored) {
+        }
     }
 
     public void showAlertDialogError(){
-        ViewGroup viewGroup = findViewById(android.R.id.content);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        try {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            errorDialog.show();
+        } catch (Exception ignored) {
+        }
     }
 
     public void startSuccess(View view) {
         showAlertDialogAllSuccess();
-
     }
     public void startSuccessAll(View view){
-        Intent intent = new Intent(WifiCheckActivity.this,MainActivity.class);
-        startActivity(intent);
+        if (myApplication.getmCurrentResource() != null) {
+            successDialog.dismiss();
+            Intent intent = new Intent(WifiCheckActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
     public void startError(View view) {
-        getWifi();
+        if (errorDialog != null && errorDialog.isShowing()) {
+            errorDialog.dismiss();
+        }
+       getWifi();
     }
     @Override
     protected void onPostResume() {
@@ -120,8 +167,8 @@ public class WifiCheckActivity extends AppCompatActivity {
             public void onGetListWifiSuccess(ArrayList<String> arrayList) {
                 for(int i = 0;i<arrayList.size();i++){
                     if(arrayList.get(i).equals("TVOHCM_Delivery")){
-                        showAlertDialogSuccess();
                         progressDialog.dismiss();
+                        showAlertDialogSuccess();
                         break;
                     }
                     else{
