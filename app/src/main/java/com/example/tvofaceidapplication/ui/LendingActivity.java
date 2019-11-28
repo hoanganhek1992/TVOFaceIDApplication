@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,12 +42,13 @@ public class LendingActivity extends AppCompatActivity {
     MyFirebase myFirebase;
     Bitmap imgTop, imgDown, imgAv;
     MyLending lending;
-    AlertDialog successDialog,errorDialog;
+    AlertDialog successDialog, errorDialog;
     ProgressDialog progressDialog;
     private final int CAMERA_CMND_1 = 100;
     private final int CAMERA_CMND_2 = 101;
     private final int CAMERA_AVATAR = 102;
-    String name,adress,phone,job;
+    String name, adress, phone, job;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +89,7 @@ public class LendingActivity extends AppCompatActivity {
             }
         });
     }
+
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     private void createDialogData() {
         progressDialog = new ProgressDialog(this);
@@ -109,13 +110,15 @@ public class LendingActivity extends AppCompatActivity {
         errorDialog.setCanceledOnTouchOutside(false);
         errorDialog.setCancelable(false);
     }
+
     public void showAlertDialogSuccess() {
         try {
             successDialog.show();
         } catch (Exception ignored) {
         }
     }
-    public void showAlertDialogError(){
+
+    public void showAlertDialogError() {
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -124,49 +127,40 @@ public class LendingActivity extends AppCompatActivity {
         } catch (Exception ignored) {
         }
     }
-    public boolean validatePhone(String phonenumber){
+
+    public boolean validatePhone(String phonenumber) {
         String regexStr = "^[0-9]$";
-        if(phonenumber.length() != 10 && !phonenumber.matches(regexStr)){
+        if (phonenumber.length() != 10 && !phonenumber.matches(regexStr)) {
             return false;
         }
         return true;
     }
 
-    public boolean validate(){
+    public boolean validate() {
         name = textName.getText().toString().trim();
         adress = textAdress.getText().toString().trim();
         phone = textPhone.getText().toString().trim();
         job = textJob.getText().toString().trim();
 
-        if(name.length() < 3){
+        if (name.length() < 3) {
             return false;
-        }
-        else if(adress.length() <3){
+        } else if (adress.length() < 3) {
             return false;
-        }
-        else if(!validatePhone(phone)){
+        } else if (!validatePhone(phone)) {
             return false;
-        }
-        else if(job.length() < 3){
+        } else if (job.length() < 3) {
             return false;
-        }
-        else if(BitMapToString(imgAv).length() < 3)
-        {
+        } else if (BitMapToString(imgAv).length() < 3) {
             return false;
-        }
-
-        else if(BitMapToString(imgTop).length() < 3)
-        {
+        } else if (BitMapToString(imgTop).length() < 3) {
             return false;
-        }
-        else if(BitMapToString(imgDown).length() < 3)
-        {
+        } else if (BitMapToString(imgDown).length() < 3) {
             return false;
         }
         return true;
     }
 
-    public void startError(View view){
+    public void startError(View view) {
         if (errorDialog != null && errorDialog.isShowing()) {
             errorDialog.dismiss();
         }
@@ -176,18 +170,20 @@ public class LendingActivity extends AppCompatActivity {
         textPhone.setText("");
         textJob.setText("");
     }
-    public void startSuccess(View view){
+
+    public void startSuccess(View view) {
         successDialog.dismiss();
         Intent intent = new Intent(LendingActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
     public void setData() {
         progressDialog.show();
         String create_at = DateFormat.getDateTimeInstance().format(new Date());
 
-        if(validate()) {
+        if (validate()) {
             lending = new MyLending(
                     name
                     , adress
@@ -204,8 +200,7 @@ public class LendingActivity extends AppCompatActivity {
                     showAlertDialogSuccess();
                 }
             });
-        }
-        else{
+        } else {
             showAlertDialogError();
         }
     }
@@ -214,7 +209,7 @@ public class LendingActivity extends AppCompatActivity {
         if (hasCameraPermission()) {
             pickImage(permission_number);
         } else {
-            requestCameraPermission();
+            requestCameraPermission(permission_number);
         }
     }
 
@@ -223,22 +218,22 @@ public class LendingActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
             if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
-            switch (requestCode){
-                case CAMERA_CMND_1:
-                    imgTop = (Bitmap) data.getExtras().get("data");
-                    imgIDcard.setImageBitmap(imgTop);
-                    BitMapToString(imgTop);
-                    break;
-                case CAMERA_CMND_2:
-                    imgDown = (Bitmap) data.getExtras().get("data");
-                    imgIDcard2.setImageBitmap(imgDown);
-                    BitMapToString(imgDown);
-                    break;
-                case CAMERA_AVATAR:
-                    imgAv = (Bitmap) data.getExtras().get("data");
-                    imgAvata.setImageBitmap(imgAv);
-                    BitMapToString(imgAv);
-                    break;
+                switch (requestCode) {
+                    case CAMERA_CMND_1:
+                        imgTop = (Bitmap) data.getExtras().get("data");
+                        imgIDcard.setImageBitmap(imgTop);
+                        BitMapToString(imgTop);
+                        break;
+                    case CAMERA_CMND_2:
+                        imgDown = (Bitmap) data.getExtras().get("data");
+                        imgIDcard2.setImageBitmap(imgDown);
+                        BitMapToString(imgDown);
+                        break;
+                    case CAMERA_AVATAR:
+                        imgAv = (Bitmap) data.getExtras().get("data");
+                        imgAvata.setImageBitmap(imgAv);
+                        BitMapToString(imgAv);
+                        break;
                 }
             }
         }
@@ -248,8 +243,7 @@ public class LendingActivity extends AppCompatActivity {
         ByteArrayOutputStream ByteStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
         byte[] b = ByteStream.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     private void pickImage(int permission_number) {
@@ -258,8 +252,8 @@ public class LendingActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_CMND_1);
+    private void requestCameraPermission(int permission_id) {
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
     }
 
     private boolean hasCameraPermission() {
@@ -269,10 +263,18 @@ public class LendingActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == CAMERA_CMND_1) {
-            processImage(CAMERA_CMND_1);
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CAMERA_CMND_1:
+                processImage(CAMERA_CMND_1);
+                break;
+            case CAMERA_CMND_2:
+                processImage(CAMERA_CMND_2);
+                break;
+            case CAMERA_AVATAR:
+                processImage(CAMERA_AVATAR);
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }
