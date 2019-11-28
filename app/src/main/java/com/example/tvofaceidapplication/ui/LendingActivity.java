@@ -21,12 +21,14 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.tvofaceidapplication.MainActivity;
 import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
@@ -61,9 +63,13 @@ public class LendingActivity extends AppCompatActivity {
         imgIDcard = findViewById(R.id.imgIDCardTop);
         imgIDcard2 = findViewById(R.id.imgIDCardDown);
         imgAvata = findViewById(R.id.imgAvata);
+
         createDialogData();
         myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
 
+        imgIDcard.setEnabled(true);
+        imgIDcard2.setEnabled(true);
+        imgAvata.setEnabled(true);
         imgIDcard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +96,18 @@ public class LendingActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void showSnackbar(final int mainTextStringId, final int actionStringId, View.OnClickListener listener) {
+        Snackbar.make(
+                findViewById(android.R.id.content),
+                getString(mainTextStringId),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(actionStringId), listener).show();
+    }
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     private void createDialogData() {
         progressDialog = new ProgressDialog(this);
@@ -208,7 +226,8 @@ public class LendingActivity extends AppCompatActivity {
     private void processImage(int permission_number) {
         if (hasCameraPermission()) {
             pickImage(permission_number);
-        } else {
+        }
+        else{
             requestCameraPermission(permission_number);
         }
     }
@@ -252,29 +271,55 @@ public class LendingActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission(int permission_id) {
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
+    private void requestCameraPermission(final int permission_id) {
+        boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+        if(shouldProvideRationale) {
+            showSnackbar(R.string.permission_rationale,
+                    android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(LendingActivity.this, new String[]{Manifest.permission.CAMERA}, permission_id);
+                        }
+                    });
+            //requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
+        }
+        else{
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
+        }
+
     }
 
     private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_CMND_1:
-                processImage(CAMERA_CMND_1);
-                break;
-            case CAMERA_CMND_2:
-                processImage(CAMERA_CMND_2);
-                break;
-            case CAMERA_AVATAR:
-                processImage(CAMERA_AVATAR);
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(hasCameraPermission()) {
+            switch (requestCode) {
+                case CAMERA_CMND_1:
+                    processImage(CAMERA_CMND_1);
+                    break;
+                case CAMERA_CMND_2:
+                    processImage(CAMERA_CMND_2);
+                    break;
+                case CAMERA_AVATAR:
+                    processImage(CAMERA_AVATAR);
+                    break;
+                default:
+                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
+        else{
+            showSnackbar(R.string.permission_rationale,
+                    android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(LendingActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
+                        }
+                    });
+        }
+
     }
+
 }
