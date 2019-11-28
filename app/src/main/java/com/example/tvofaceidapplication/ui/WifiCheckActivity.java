@@ -232,7 +232,8 @@ public class WifiCheckActivity extends AppCompatActivity {
         if (errorDialog != null && errorDialog.isShowing()) {
             errorDialog.dismiss();
         }
-       getWifi();
+        progressDialog.show();
+        getWifi();
     }
     @Override
     protected void onPostResume() {
@@ -241,12 +242,13 @@ public class WifiCheckActivity extends AppCompatActivity {
             @Override
             public void onGetListWifiSuccess(ArrayList<String> arrayList) {
                 for(int i = 0;i<arrayList.size();i++){
-                    if(arrayList.get(i).equals("TVOHCM_Delivery")){
+                    if(arrayList.get(i).equals(mMyLocation.getWifi_ssid())){
                         progressDialog.dismiss();
                         showAlertDialogSuccess();
                         break;
                     }
                 }
+                showAlertDialogError();
             }
 
             @Override
