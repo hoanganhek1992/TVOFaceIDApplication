@@ -8,9 +8,11 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
     <string name="settings">Settings</string>
-    <string name="loading_location">Đang tìm vị trí vui lòng chờ...</string>
+    <string name="loading_location">Vui lòng chờ...</string>
     <string name="message_get_success">"Xác thực thành công."</string>
     <string name="message_get_error">"Xác thực thất bại."</string>
-    <string name="loading_wifi">Đang tìm wifi xung quanh vui lòng chờ...</string>
+    <string name="loading_wifi">Vui lòng chờ...</string>
     <string name="message_get_success_all">"Bạn đã xác thực thành công."</string>
+    <string name="name_employee">Tên nhân viên: </string>
+    <string name="loading_add_employee">Đang thêm thành viên ...</string>
 </resources>

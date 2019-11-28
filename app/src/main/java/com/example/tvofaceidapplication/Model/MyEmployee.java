@@ -4,7 +4,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class MyEmployee {
-    private String name, image;
+    private String  name, image;
 
     public MyEmployee() {
     }

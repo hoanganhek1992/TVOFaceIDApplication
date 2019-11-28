@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tvofaceidapplication.MainActivity;
+import com.example.tvofaceidapplication.Model.MyEmployee;
 import com.example.tvofaceidapplication.Model.MyLocation;
+import com.example.tvofaceidapplication.Model.MyTimeKeeping;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
+import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class WifiCheckActivity extends AppCompatActivity {
 
@@ -44,25 +50,43 @@ public class WifiCheckActivity extends AppCompatActivity {
     AlertDialog errorDialog;
     AlertDialog alertDialogAll;
     TextView timeCurrent,txtWifiname,name,nameLocation,timeCurrent2,txtWifiname2;
+    MyFirebase myFirebase;
+    MyTimeKeeping keeping;
+    private String id_employee,name_employee,id_location;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_check);
         myApplication = MyApplication.getInstance();
+        keeping =  new MyTimeKeeping();
         mMyLocation = myApplication.getmCurrentResource();
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        assert wifiManager != null;
-        if (!wifiManager.isWifiEnabled()) {
-            Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
-            wifiManager.setWifiEnabled(true);
-        }
+        myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
         createDialogData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         showLoading();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert wifiManager != null;
+        if (!wifiManager.isWifiEnabled()) {
+            Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
+            wifiManager.setWifiEnabled(true);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!successDialog.isShowing() || !alertDialogAll.isShowing()){
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -76,6 +100,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.loading_wifi);
         progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         ViewGroup viewGroup = findViewById(android.R.id.content);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -83,6 +108,8 @@ public class WifiCheckActivity extends AppCompatActivity {
         View viewError = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
         builder.setView(viewError);
         errorDialog = builder.create();
+        errorDialog.setCanceledOnTouchOutside(false);
+        errorDialog.setCancelable(false);
 
 
         View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
@@ -90,6 +117,8 @@ public class WifiCheckActivity extends AppCompatActivity {
         txtWifiname =viewSuccess.findViewById(R.id.txtLocation);
         builder.setView(viewSuccess);
         successDialog = builder.create();
+        successDialog.setCanceledOnTouchOutside(false);
+        successDialog.setCancelable(false);
 
 
         View viewAll = LayoutInflater.from(this).inflate(R.layout.notification_all_success, viewGroup, false);
@@ -99,6 +128,8 @@ public class WifiCheckActivity extends AppCompatActivity {
         txtWifiname2 = viewAll.findViewById(R.id.txtWifiName);
         builder.setView(viewAll);
         alertDialogAll = builder.create();
+        alertDialogAll.setCanceledOnTouchOutside(false);
+        alertDialogAll.setCancelable(false);
     }
 
 
@@ -115,6 +146,8 @@ public class WifiCheckActivity extends AppCompatActivity {
             timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
             txtWifiname.setText(mMyLocation.getWifi_ssid());
             successDialog.show();
+
+
         } catch (Exception ignored) {
         }
     }
@@ -123,13 +156,12 @@ public class WifiCheckActivity extends AppCompatActivity {
     public void showAlertDialogAllSuccess(){
         try {
             timeCurrent2.setText("Thời gian: "+ DateFormat.getTimeInstance().format(new Date()));
-
             //Need update
-            name.setText(mMyLocation.getName());
-
+            name.setText(name_employee.trim());
             nameLocation.setText(mMyLocation.getName());
             txtWifiname2.setText(mMyLocation.getWifi_ssid());
             alertDialogAll.show();
+
         } catch (Exception ignored) {
         }
     }
@@ -145,15 +177,55 @@ public class WifiCheckActivity extends AppCompatActivity {
     }
 
     public void startSuccess(View view) {
+        myFirebase.getEmployee(new MyFirebase.GetEmployeeCallback() {
+            @Override
+            public void onGetEmployeeSuccess(List<MyEmployee> list, List<String> idEmployee) {
+                id_employee = idEmployee.get(0);
+                name_employee = list.get(0).getName();
+                Log.e("TAG",list.get(0).getName());
+            }
+            @Override
+            public void onGetEmployeeError(Exception err) {
+            }
+        });
+        myFirebase.getLocation(new MyFirebase.LocationCallback() {
+            @Override
+            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
+                for(int i =0;i<list.size();i++){
+                    if(list.get(i).getWifi_ssid().equals(mMyLocation.getWifi_ssid())){
+                        id_location = idLocation.get(i);
+                    }
+                }
+            }
+            @Override
+            public void onGetLocationError(Exception err) {
+            }
+        });
         showAlertDialogAllSuccess();
+
     }
+    public void getTimeKeeping(){
+        keeping.setEmployee_id(id_employee);
+        keeping.setCreated_at(DateFormat.getDateTimeInstance().format(new Date()));
+        keeping.setLocation_id(id_location);
+       myFirebase.addTimeKepping(keeping, new MyFirebase.TimeKeepingCallback() {
+            @Override
+            public void onAddTimeKeepingSuccess() {
+                progressDialog.dismiss();
+                Intent intent = new Intent(WifiCheckActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+    }
+
     public void startSuccessAll(View view){
+        successDialog.dismiss();
+        alertDialogAll.dismiss();
         if (myApplication.getmCurrentResource() != null) {
-            successDialog.dismiss();
-            Intent intent = new Intent(WifiCheckActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            progressDialog.show();
+            getTimeKeeping();
         }
     }
     public void startError(View view) {

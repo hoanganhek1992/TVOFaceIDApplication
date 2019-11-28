@@ -52,6 +52,7 @@ public class LendingActivity extends AppCompatActivity {
         startActivityForResult(intent, CAMERA_PIC_REQUEST);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Bitmap photo = (Bitmap) data.getExtras().get("data");
         imgIDcard.setImageBitmap(photo);
     }

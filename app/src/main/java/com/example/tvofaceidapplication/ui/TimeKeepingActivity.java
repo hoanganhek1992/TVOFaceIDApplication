@@ -19,14 +19,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,11 +46,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.lang.Double.parseDouble;
 
 public class TimeKeepingActivity extends AppCompatActivity {
     private static final String TAG = TimeKeepingActivity.class.getSimpleName();
@@ -68,10 +74,11 @@ public class TimeKeepingActivity extends AppCompatActivity {
     boolean isLoading = false;
     int mCount = 0;
     final int mMaxRepeat = 10;
-    Location location;
-
+    Location mlocation = new Location("");
+    MyFirebase myFirebase;
     MyApplication myApplication;
-    private List<MyLocation> myLocations = new ArrayList<>();
+    private List<MyLocation> myLocations;
+
 
     /*Dialog*/
     ProgressDialog progressDialog;
@@ -85,8 +92,10 @@ public class TimeKeepingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_keeping);
         myApplication = MyApplication.getInstance();
-
+        myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
+        myLocations = new ArrayList<>();
         updateTime = findViewById(R.id.txtTimeCurent);
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
         createExampleData();
@@ -99,6 +108,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.loading_location);
         progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         ViewGroup viewGroup = findViewById(android.R.id.content);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -106,22 +116,37 @@ public class TimeKeepingActivity extends AppCompatActivity {
         View viewError = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
         builder.setView(viewError);
         errorDialog = builder.create();
+        errorDialog.setCanceledOnTouchOutside(false);
+        errorDialog.setCancelable(false);
 
         View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
         timeCurrent = viewSuccess.findViewById(R.id.txtTimeCurent);
         locationCurrent = viewSuccess.findViewById(R.id.txtLocation);
+
         builder.setView(viewSuccess);
         successDialog = builder.create();
+        successDialog.setCanceledOnTouchOutside(false);
+        successDialog.setCancelable(false);
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("TAG", "onResume");
         if (checkPermissions()) {
             startLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.e("TAG", "onResume");
+        if (!successDialog.isShowing()) {
+            Log.e("TAG", successDialog.isShowing() + "");
+            super.onBackPressed();
         }
     }
 
@@ -137,16 +162,19 @@ public class TimeKeepingActivity extends AppCompatActivity {
     }
 
     private void createExampleData() {
-        double lat = 10.773575;
-        double lng = 106.681062;
-        for (int i = 0; i < 10; i++) {
-            Location resourceLocation = new Location("");
-            resourceLocation.setLatitude(lat);
-            resourceLocation.setLongitude(lng);
-            myLocations.add(new MyLocation("TVOHCM_Delivery", resourceLocation, "Tinh Vân Outsourcing", "Nguyen Văn A"));
-            lat += 0.1;
-            lng += 0.1;
-        }
+
+        myFirebase.getLocation(new MyFirebase.LocationCallback() {
+            @Override
+            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
+                myLocations.addAll(list);
+                Log.e("Error", myLocations.get(0).getLongtitude());
+            }
+
+            @Override
+            public void onGetLocationError(Exception err) {
+                Log.e("Error", err.toString());
+            }
+        });
     }
 
 
@@ -164,6 +192,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     public void showAlertDialogError() {
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
+                successDialog.setCanceledOnTouchOutside(false);
                 progressDialog.dismiss();
             }
             errorDialog.show();
@@ -202,6 +231,8 @@ public class TimeKeepingActivity extends AppCompatActivity {
         if (myApplication.getmCurrentResource() != null) {
             successDialog.dismiss();
             Intent intent = new Intent(TimeKeepingActivity.this, WifiCheckActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
     }
@@ -227,8 +258,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
                 });
     }
 
-    private void showSnackbar(final int mainTextStringId, final int actionStringId,
-                              View.OnClickListener listener) {
+    private void showSnackbar(final int mainTextStringId, final int actionStringId, View.OnClickListener listener) {
         Snackbar.make(
                 findViewById(android.R.id.content),
                 getString(mainTextStringId),
@@ -242,11 +272,14 @@ public class TimeKeepingActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                location = locationResult.getLastLocation();
-                if (location != null) {
+                mlocation = locationResult.getLastLocation();
+                if (mlocation != null) {
                     for (int i = 0; i < myLocations.size(); i++) {
+                        Location mLocation = new Location(",");
+                        mLocation.setLatitude(parseDouble(myLocations.get(i).getLatitude()));
+                        mLocation.setLongitude(parseDouble(myLocations.get(i).getLongtitude()));
                         if (mCount < mMaxRepeat) {
-                            if (calculateDistance(myLocations.get(i).getLocation(), location) < 1000) {
+                            if (calculateDistance(mLocation, mlocation) < 1000) {
                                 stopLocationUpdates();
                                 mCount = 0;
                                 progressDialog.dismiss();

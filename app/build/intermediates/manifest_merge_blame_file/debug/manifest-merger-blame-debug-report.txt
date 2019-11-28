@@ -1,0 +1,145 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.tvofaceidapplication"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+8-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="29" />
+9-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:6:5-67
+11-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:6:22-64
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:7:5-65
+12-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:7:22-62
+13    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+13-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:8:5-79
+13-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:8:22-76
+14    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+14-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:9:5-76
+14-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:9:22-73
+15    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+15-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:10:5-76
+15-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:10:22-73
+16
+17    <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
+18    <!-- <uses-sdk android:minSdkVersion="14"/> -->
+19    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+19-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:25:5-79
+19-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:25:22-76
+20
+21    <application
+21-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:12:5-33:19
+22        android:name="com.example.tvofaceidapplication.MyApplication"
+22-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:13:9-38
+23        android:allowBackup="true"
+23-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:14:9-35
+24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+24-->[androidx.core:core:1.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\290377ef3f04af0b2bf13aa0b54ad202\core-1.1.0\AndroidManifest.xml:24:18-86
+25        android:debuggable="true"
+26        android:icon="@mipmap/ic_launcher"
+26-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:15:9-43
+27        android:label="@string/app_name"
+27-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:16:9-41
+28        android:roundIcon="@mipmap/ic_launcher_round"
+28-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:17:9-54
+29        android:supportsRtl="true"
+29-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:18:9-35
+30        android:theme="@style/AppTheme" >
+30-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:19:9-40
+31        <activity android:name="com.example.tvofaceidapplication.ui.ListEmployeeActivity" />
+31-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:21:9-70
+31-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:21:19-58
+32        <activity android:name="com.example.tvofaceidapplication.ui.AddEmployeeActivity" />
+32-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:22:9-60
+32-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:22:19-57
+33        <activity android:name="com.example.tvofaceidapplication.ui.WifiCheckActivity" />
+33-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:23:9-58
+33-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:23:19-55
+34        <activity android:name="com.example.tvofaceidapplication.ui.TimeKeepingActivity" />
+34-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:24:9-60
+34-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:24:19-57
+35        <activity android:name="com.example.tvofaceidapplication.ui.LendingActivity" />
+35-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:25:9-56
+35-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:25:19-53
+36        <activity android:name="com.example.tvofaceidapplication.MainActivity" >
+36-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:26:9-32:20
+36-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:26:19-47
+37            <intent-filter>
+37-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:27:13-31:29
+38                <action android:name="android.intent.action.MAIN" />
+38-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:28:17-69
+38-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:28:25-66
+39
+40                <category android:name="android.intent.category.LAUNCHER" />
+40-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:30:17-77
+40-->C:\Users\VIE Billy\Downloads\TVOFaceIDApplication-developer\TVOFaceIDApplication-developer\app\src\main\AndroidManifest.xml:30:27-74
+41            </intent-filter>
+42        </activity>
+43
+44        <service
+44-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:29:9-35:19
+45            android:name="com.google.firebase.components.ComponentDiscoveryService"
+45-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:30:13-84
+46            android:directBootAware="true"
+46-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:34:13-43
+47            android:exported="false" >
+47-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:31:13-37
+48            <meta-data
+48-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:32:13-34:85
+49                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
+49-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:33:17-109
+50                android:value="com.google.firebase.components.ComponentRegistrar" />
+50-->[com.google.firebase:firebase-database:19.2.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f10127e9d8318f4d4750b9e91ab15d15\firebase-database-19.2.0\AndroidManifest.xml:34:17-82
+51            <meta-data
+51-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\748a8d6bb0d2359f6c911bd9c7a47600\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:20:13-22:85
+52                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
+52-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\748a8d6bb0d2359f6c911bd9c7a47600\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:21:17-111
+53                android:value="com.google.firebase.components.ComponentRegistrar" />
+53-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\748a8d6bb0d2359f6c911bd9c7a47600\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:22:17-82
+54        </service>
+55
+56        <activity
+56-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\b40e8a8611b735163d3bb330b22a1aa3\play-services-base-17.0.0\AndroidManifest.xml:23:9-26:75
+57            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+57-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\b40e8a8611b735163d3bb330b22a1aa3\play-services-base-17.0.0\AndroidManifest.xml:24:13-79
+58            android:exported="false"
+58-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\b40e8a8611b735163d3bb330b22a1aa3\play-services-base-17.0.0\AndroidManifest.xml:25:13-37
+59            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+59-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\b40e8a8611b735163d3bb330b22a1aa3\play-services-base-17.0.0\AndroidManifest.xml:26:13-72
+60
+61        <provider
+61-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:26:9-30:39
+62            android:name="com.google.firebase.provider.FirebaseInitProvider"
+62-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:27:13-77
+63            android:authorities="com.example.tvofaceidapplication.firebaseinitprovider"
+63-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:28:13-72
+64            android:exported="false"
+64-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:29:13-37
+65            android:initOrder="100" />
+65-->[com.google.firebase:firebase-common:19.3.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\c291df557297f5dfe658983fd32135ba\jetified-firebase-common-19.3.0\AndroidManifest.xml:30:13-36
+66
+67        <meta-data
+67-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f3cc4df59e569cf9fb608eb786d7acc9\jetified-play-services-basement-17.0.0\AndroidManifest.xml:23:9-25:69
+68            android:name="com.google.android.gms.version"
+68-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f3cc4df59e569cf9fb608eb786d7acc9\jetified-play-services-basement-17.0.0\AndroidManifest.xml:24:13-58
+69            android:value="@integer/google_play_services_version" />
+69-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\f3cc4df59e569cf9fb608eb786d7acc9\jetified-play-services-basement-17.0.0\AndroidManifest.xml:25:13-66
+70
+71        <provider
+71-->[androidx.lifecycle:lifecycle-process:2.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\47ecb745954fd894e9c5d4c2264ee606\lifecycle-process-2.1.0\AndroidManifest.xml:23:9-27:43
+72            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+72-->[androidx.lifecycle:lifecycle-process:2.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\47ecb745954fd894e9c5d4c2264ee606\lifecycle-process-2.1.0\AndroidManifest.xml:24:13-79
+73            android:authorities="com.example.tvofaceidapplication.lifecycle-process"
+73-->[androidx.lifecycle:lifecycle-process:2.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\47ecb745954fd894e9c5d4c2264ee606\lifecycle-process-2.1.0\AndroidManifest.xml:25:13-69
+74            android:exported="false"
+74-->[androidx.lifecycle:lifecycle-process:2.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\47ecb745954fd894e9c5d4c2264ee606\lifecycle-process-2.1.0\AndroidManifest.xml:26:13-37
+75            android:multiprocess="true" />
+75-->[androidx.lifecycle:lifecycle-process:2.1.0] C:\Users\VIE Billy\.gradle\caches\transforms-2\files-2.1\47ecb745954fd894e9c5d4c2264ee606\lifecycle-process-2.1.0\AndroidManifest.xml:27:13-40
+76    </application>
+77
+78</manifest>

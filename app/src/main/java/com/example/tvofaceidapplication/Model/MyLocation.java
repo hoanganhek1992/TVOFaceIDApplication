@@ -9,15 +9,17 @@ import java.io.Serializable;
 @IgnoreExtraProperties
 public class MyLocation implements Serializable {
     private String wifi_ssid;
-    private Location location;
+    private String latitude;
+    private String longtitude;
     private String name;
 
     public MyLocation() {
     }
 
-    public MyLocation(String wifiname, Location location, String nameLocation, String name) {
+    public MyLocation( String wifiname, String latitude,String longtitude, String name) {
         wifi_ssid = wifiname;
-        this.location = location;
+        this.latitude = latitude;
+        this.longtitude = longtitude;
         this.name = name;
     }
 
@@ -29,19 +31,27 @@ public class MyLocation implements Serializable {
         this.wifi_ssid = wifi_ssid;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitude(String longtitude) {
+        this.longtitude = longtitude;
     }
 }
