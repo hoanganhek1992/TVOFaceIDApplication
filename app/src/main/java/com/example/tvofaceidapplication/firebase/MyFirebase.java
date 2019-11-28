@@ -3,6 +3,7 @@ package com.example.tvofaceidapplication.firebase;
 import androidx.annotation.NonNull;
 
 import com.example.tvofaceidapplication.Model.MyEmployee;
+import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.Model.MyTimeKeeping;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -98,6 +99,14 @@ public class MyFirebase {
             }
         });
     }
+
+    public void addLending(MyLending lending,final LendingCallback callback){
+        mDatabase.collection(TABLE_LENDING).document(System.currentTimeMillis() + "").set(lending).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+            callback.onAddLendingSuccess();
+        }
+    });}
 
     public interface AddEmployeeCallback {
 

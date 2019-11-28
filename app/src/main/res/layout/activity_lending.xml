@@ -112,6 +112,14 @@
             android:src="@drawable/cmnd"
             android:layout_width="80dp"
             android:layout_height="80dp"/>
+        <View
+            android:layout_width="20dp"
+            android:layout_height="80dp"/>
+        <ImageView
+            android:id="@+id/imgAvata"
+            android:src="@drawable/icon_add_employee"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
     </LinearLayout>
 
     <Button

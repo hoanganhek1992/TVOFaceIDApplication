@@ -15,4 +15,5 @@
     <string name="message_get_success_all">"Bạn đã xác thực thành công."</string>
     <string name="name_employee">Tên nhân viên: </string>
     <string name="loading_add_employee">Đang thêm thành viên ...</string>
+    <string name="loading_add_lending">Đang xác nhận ...</string>
 </resources>
