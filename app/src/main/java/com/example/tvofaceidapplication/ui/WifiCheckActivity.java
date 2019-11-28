@@ -247,8 +247,10 @@ public class WifiCheckActivity extends AppCompatActivity {
                         showAlertDialogSuccess();
                         break;
                     }
+                    else{
+                        showAlertDialogError();
+                    }
                 }
-                showAlertDialogError();
             }
 
             @Override
