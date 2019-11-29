@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +42,7 @@ public class LendingActivity extends AppCompatActivity {
     EditText textName, textAdress, textPhone, textJob;
     ImageView imgIDcard, imgIDcard2, imgAvata;
     Button btnVerify;
+    TextView textError;
     MyFirebase myFirebase;
     Bitmap imgTop, imgDown, imgAv;
     MyLending lending;
@@ -49,7 +51,13 @@ public class LendingActivity extends AppCompatActivity {
     private final int CAMERA_CMND_1 = 100;
     private final int CAMERA_CMND_2 = 101;
     private final int CAMERA_AVATAR = 102;
-    String name, adress, phone, job;
+    String name, adress, phone, job,textEr;
+    private final int ERROR_CODE_NAME = 1;
+    private final int ERROR_CODE_ADDRESS = 2;
+    private final int ERROR_CODE_PHONE = 3;
+    private final int ERROR_CODE_JOB = 4;
+    private final int ERROR_CODE_IMAGE = 5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,14 +124,15 @@ public class LendingActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         ViewGroup viewGroup = findViewById(android.R.id.content);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
+        View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_alear, viewGroup, false);
         builder.setView(viewSuccess);
         successDialog = builder.create();
         successDialog.setCanceledOnTouchOutside(false);
         successDialog.setCancelable(false);
 
-        View viewError = LayoutInflater.from(this).inflate(R.layout.notification_error, viewGroup, false);
+        View viewError = LayoutInflater.from(this).inflate(R.layout.notification_alear_error, viewGroup, false);
         builder.setView(viewError);
+        textError = viewError.findViewById(R.id.textError);
         errorDialog = builder.create();
         errorDialog.setCanceledOnTouchOutside(false);
         errorDialog.setCancelable(false);
@@ -138,9 +147,6 @@ public class LendingActivity extends AppCompatActivity {
 
     public void showAlertDialogError() {
         try {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
             errorDialog.show();
         } catch (Exception ignored) {
         }
@@ -154,6 +160,27 @@ public class LendingActivity extends AppCompatActivity {
         return true;
     }
 
+    public void validateText(int code){
+        switch (code){
+            case ERROR_CODE_NAME:
+                textError.setText(R.string.error_name);
+                break;
+            case ERROR_CODE_ADDRESS:
+                textError.setText(R.string.error_address);
+            case ERROR_CODE_PHONE:
+                textError.setText(R.string.error_phone);
+                break;
+            case ERROR_CODE_JOB:
+                textError.setText(R.string.error_job);
+                break;
+            case ERROR_CODE_IMAGE:
+                textError.setText(R.string.error_image);
+                break;
+            default:
+                break;
+        }
+    }
+
     public boolean validate() {
         name = textName.getText().toString().trim();
         adress = textAdress.getText().toString().trim();
@@ -161,18 +188,25 @@ public class LendingActivity extends AppCompatActivity {
         job = textJob.getText().toString().trim();
 
         if (name.length() < 3) {
+            validateText(ERROR_CODE_NAME);
             return false;
         } else if (adress.length() < 3) {
+            validateText(ERROR_CODE_ADDRESS);
             return false;
         } else if (!validatePhone(phone)) {
+            validateText(ERROR_CODE_PHONE);
             return false;
         } else if (job.length() < 3) {
+            validateText(ERROR_CODE_JOB);
             return false;
-        } else if (BitMapToString(imgAv).length() < 3) {
+        } else if (BitMapToString(imgAv).length() < 1) {
+            validateText(ERROR_CODE_IMAGE);
             return false;
-        } else if (BitMapToString(imgTop).length() < 3) {
+        } else if (BitMapToString(imgTop).length() < 1) {
+            validateText(ERROR_CODE_IMAGE);
             return false;
-        } else if (BitMapToString(imgDown).length() < 3) {
+        } else if (BitMapToString(imgDown).length() < 1) {
+            validateText(ERROR_CODE_IMAGE);
             return false;
         }
         return true;
@@ -183,10 +217,6 @@ public class LendingActivity extends AppCompatActivity {
             errorDialog.dismiss();
         }
         progressDialog.dismiss();
-        textName.setText("");
-        textAdress.setText("");
-        textPhone.setText("");
-        textJob.setText("");
     }
 
     public void startSuccess(View view) {
@@ -200,17 +230,12 @@ public class LendingActivity extends AppCompatActivity {
     public void setData() {
         progressDialog.show();
         String create_at = DateFormat.getDateTimeInstance().format(new Date());
-
-        if (validate()) {
-            lending = new MyLending(
-                    name
-                    , adress
-                    , phone
-                    , job
-                    , BitMapToString(imgAv)
-                    , BitMapToString(imgTop)
-                    , BitMapToString(imgDown)
-                    , create_at);
+        if (!validate()){
+            progressDialog.dismiss();
+            showAlertDialogError();
+            }
+        else {
+            lending = new MyLending(name, adress, phone, job, BitMapToString(imgAv), BitMapToString(imgTop), BitMapToString(imgDown), create_at);
             myFirebase.addLending(lending, new MyFirebase.LendingCallback() {
                 @Override
                 public void onAddLendingSuccess() {
@@ -218,8 +243,6 @@ public class LendingActivity extends AppCompatActivity {
                     showAlertDialogSuccess();
                 }
             });
-        } else {
-            showAlertDialogError();
         }
     }
 
@@ -259,10 +282,14 @@ public class LendingActivity extends AppCompatActivity {
     }
 
     public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream ByteStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
-        byte[] b = ByteStream.toByteArray();
-        return Base64.encodeToString(b, Base64.DEFAULT);
+        if(bitmap != null)
+        {
+            ByteArrayOutputStream ByteStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
+            byte[] b = ByteStream.toByteArray();
+            return Base64.encodeToString(b, Base64.DEFAULT);
+        }
+       return null;
     }
 
     private void pickImage(int permission_number) {

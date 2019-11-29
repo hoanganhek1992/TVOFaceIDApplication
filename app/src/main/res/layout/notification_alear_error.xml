@@ -26,9 +26,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/message_get_error"
+            android:text="@string/message_error"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        <TextView
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:id="@+id/textError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:onClick="startError"

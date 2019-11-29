@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ import java.util.Objects;
 public class AddEmployeeActivity extends AppCompatActivity {
     private final int CAMERA_PIC_REQUEST = 100;
     ImageView imgEmployee;
+    TextView textError;
     EditText edtName;
     Button btnAdd;
     Bitmap photo;
@@ -53,6 +55,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
         imgEmployee = findViewById(R.id.imgEmployee);
         edtName = findViewById(R.id.editName);
         btnAdd = findViewById(R.id.btnSuccess);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.loading_add_employee);
         progressDialog.setCanceledOnTouchOutside(false);
@@ -79,7 +82,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
         try {
             ViewGroup viewGroup = findViewById(android.R.id.content);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            View viewError = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
+            View viewError = LayoutInflater.from(this).inflate(R.layout.notification_alear, viewGroup, false);
             builder.setView(viewError);
             successDialog = builder.create();
             successDialog.show();

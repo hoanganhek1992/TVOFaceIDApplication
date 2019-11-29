@@ -202,7 +202,6 @@ public class WifiCheckActivity extends AppCompatActivity {
             }
         });
         showAlertDialogAllSuccess();
-
     }
     public void getTimeKeeping(){
         keeping.setEmployee_id(id_employee);

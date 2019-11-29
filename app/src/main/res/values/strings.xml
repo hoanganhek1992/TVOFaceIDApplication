@@ -10,10 +10,17 @@
     <string name="settings">Settings</string>
     <string name="loading_location">Vui lòng chờ...</string>
     <string name="message_get_success">"Xác thực thành công."</string>
+    <string name="message_success">"Thành công."</string>
     <string name="message_get_error">"Xác thực thất bại."</string>
+    <string name="message_error">"Không thể đăng ký."</string>
     <string name="loading_wifi">Vui lòng chờ...</string>
-    <string name="message_get_success_all">"Bạn đã xác thực thành công."</string>
+    <string name="message_get_success_all">"Bạn đã điểm danh thành công."</string>
     <string name="name_employee">Tên nhân viên: </string>
     <string name="loading_add_employee">Đang thêm thành viên ...</string>
     <string name="loading_add_lending">Đang xác nhận ...</string>
+    <string name="error_name">Nhập lại tên khách hàng.</string>
+    <string name="error_address">Nhập lại địa chỉ.</string>
+    <string name="error_phone">Nhập lại số điện thoại.</string>
+    <string name="error_job">Nhập lại nghề nghiệp.</string>
+    <string name="error_image">Thiếu hình ảnh.</string>
 </resources>
