@@ -2,6 +2,7 @@ package com.example.tvofaceidapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,11 @@ import com.example.tvofaceidapplication.ui.AddEmployeeActivity;
 import com.example.tvofaceidapplication.ui.LendingActivity;
 import com.example.tvofaceidapplication.ui.ListEmployeeActivity;
 import com.example.tvofaceidapplication.ui.TimeKeepingActivity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -52,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
                 break;
             case R.id.listEmployee:
+
                 Intent i1 = new Intent(MainActivity.this, ListEmployeeActivity.class);
-                startActivity(i1);
+               startActivity(i1);
                 break;
             default:
                 return false;

@@ -49,7 +49,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -181,7 +183,9 @@ public class TimeKeepingActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void showAlertDialogSuccess() {
         try {
-            timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
+            DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+            String date = df.format(Calendar.getInstance().getTime());
+            timeCurrent.setText("Thời gian: " + date);
             locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentResource().getName());
             successDialog.show();
         } catch (Exception ignored) {

@@ -34,6 +34,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -229,13 +231,14 @@ public class LendingActivity extends AppCompatActivity {
 
     public void setData() {
         progressDialog.show();
-        String create_at = DateFormat.getDateTimeInstance().format(new Date());
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date = df.format(Calendar.getInstance().getTime());
         if (!validate()){
             progressDialog.dismiss();
             showAlertDialogError();
             }
         else {
-            lending = new MyLending(name, adress, phone, job, BitMapToString(imgAv), BitMapToString(imgTop), BitMapToString(imgDown), create_at);
+            lending = new MyLending(name, adress, phone, job, BitMapToString(imgAv), BitMapToString(imgTop), BitMapToString(imgDown), date);
             myFirebase.addLending(lending, new MyFirebase.LendingCallback() {
                 @Override
                 public void onAddLendingSuccess() {

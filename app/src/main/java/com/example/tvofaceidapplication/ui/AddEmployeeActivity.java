@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -90,8 +94,10 @@ public class AddEmployeeActivity extends AppCompatActivity {
         }
     }
     private void uploadData() {
+        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        String date = df.format(Calendar.getInstance().getTime());
         progressDialog.show();
-        myEmployee = new MyEmployee(edtName.getText().toString().trim(), BitMapToString(photo));
+        myEmployee = new MyEmployee(edtName.getText().toString().trim(), BitMapToString(photo),date);
         myFirebase.addEmployee(myEmployee, new MyFirebase.AddEmployeeCallback() {
             @Override
             public void onAddEmployeeSuccess() {
