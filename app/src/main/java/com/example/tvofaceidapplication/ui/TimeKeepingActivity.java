@@ -192,7 +192,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     public void showAlertDialogError() {
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
-                errorDialog.setCanceledOnTouchOutside(false);
+
                 progressDialog.dismiss();
             }
             errorDialog.show();
