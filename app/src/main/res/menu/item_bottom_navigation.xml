@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_new_lending"
+        android:icon="@drawable/ic_assignment"
+        android:title="@string/add_new_landing" />
+
+    <item
+        android:id="@+id/item_search_contract"
+        android:icon="@drawable/ic_library_books"
+        android:title="@string/search_contract" />
+
+    <item
+        android:id="@+id/item_time_keeping"
+        android:icon="@drawable/ic_input"
+        android:title="@string/time_keeping" />
+
+</menu>

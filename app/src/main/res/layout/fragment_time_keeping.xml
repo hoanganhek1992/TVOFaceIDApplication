@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.timekeeping.TimeKeepingFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessLeaf,UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/user_inf_content"
+            android:background="@color/gray"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/time_keeping_currentImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_camera"
+                android:tint="@color/grayDark"
+                tools:ignore="ContentDescription" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/color_blue_background_timekeeping">
+
+                <ImageButton
+                    android:id="@+id/time_keeping_openCamera"
+                    android:layout_width="@dimen/default_size_button_camera"
+                    android:layout_height="@dimen/default_size_button_camera"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/default_margin_large"
+                    android:background="@drawable/image_button_camera"
+                    tools:ignore="ContentDescription" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/default_margin_large"
+                    android:src="@drawable/avatar"
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="1dp" />
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_inf_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/default_margin_medium"
+            android:orientation="vertical"
+            android:padding="@dimen/default_padding_medium">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/default_margin_medium"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/text_inf_user_title"
+                android:textColor="@color/green"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/full_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time_keeping_name"
+                    style="@style/CustomEdittext_InfUser"
+                    android:text="@string/text_name_example" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/user_code">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time_keeping_user_code"
+                    style="@style/CustomEdittext_InfUser" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_location">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time_keeping_location"
+                    style="@style/CustomEdittext_InfUser" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_wifi_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time_keeping_wifi_name"
+                    style="@style/CustomEdittext_InfUser" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

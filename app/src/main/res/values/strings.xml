@@ -23,4 +23,26 @@
     <string name="error_phone">Nhập lại số điện thoại.</string>
     <string name="error_job">Nhập lại nghề nghiệp.</string>
     <string name="error_image">Thiếu hình ảnh.</string>
+    <string name="hdsaison_slogan">Cùng HD SAISON\nđem ước mơ về nhà</string>
+    <string name="demo_version">Demo Version</string>
+    <string name="time_keeping">Chấm công</string>
+    <string name="search_contract">Tra cứu hợp đồng</string>
+    <string name="add_new_landing">Tạo khoản vay mới</string>
+
+    <string name="please_login">Vui lòng đăng nhập để sử dụng chức năng.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_lending">LendingFragment</string>
+    <string name="fragment_timekeeping">Timekeeping Fragment</string>
+    <string name="fragment_search_contract">Search Contract Fragment</string>
+    <string name="full_name">Họ tên</string>
+    <string name="text_name_example">Nguyễn Hoàng Anh</string>
+    <string name="user_code">Mã định danh</string>
+    <string name="text_location">Tọa độ GPS</string>
+    <string name="text_wifi_name">Định danh Wifi</string>
+    <string name="text_inf_user_title">Thông tin nhân viên</string>
+    <string name="text_created_time_example">01/12/2019 17:00</string>
+    <string name="text_contract_id_example">ED01222166681</string>
+    <string name="text_status_example">Trạng thái: Đã duyệt</string>
 </resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding_small">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/item_contract_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/item_contract_createdAt"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/text_contract_id_example"
+            android:textAllCaps="true"
+            android:textColor="@color/blue"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_contract_createdAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/text_created_time_example"
+            android:textColor="@color/grayDark"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/item_contract_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/item_contract_status"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/text_name_example"
+            android:textColor="@color/gray" />
+
+        <TextView
+            android:id="@+id/item_contract_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/text_status_example"
+            android:textColor="@color/gray" />
+    </RelativeLayout>
+</LinearLayout>

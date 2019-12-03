@@ -169,7 +169,6 @@ public class TimeKeepingActivity extends AppCompatActivity {
             @Override
             public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
                 myLocations.addAll(list);
-                Log.e("Error", myLocations.get(0).getLongtitude());
             }
 
             @Override
@@ -279,16 +278,16 @@ public class TimeKeepingActivity extends AppCompatActivity {
                 mlocation = locationResult.getLastLocation();
                 if (mlocation != null) {
                     for (int i = 0; i < myLocations.size(); i++) {
-                        Location mLocation = new Location(",");
-                        mLocation.setLatitude(parseDouble(myLocations.get(i).getLatitude()));
-                        mLocation.setLongitude(parseDouble(myLocations.get(i).getLongtitude()));
-                        if (mCount < mMaxRepeat) {
-                            if (calculateDistance(mLocation, mlocation) < 1000) {
-                                stopLocationUpdates();
-                                mCount = 0;
-                                progressDialog.dismiss();
-                                myApplication.setmCurrentResource(myLocations.get(i));
-                                showAlertDialogSuccess();
+                                    Location mLocation = new Location(",");
+                                    mLocation.setLatitude(parseDouble(myLocations.get(i).getLatitude()));
+                                    mLocation.setLongitude(parseDouble(myLocations.get(i).getLongtitude()));
+                                    if (mCount < mMaxRepeat) {
+                                        if (calculateDistance(mLocation, mlocation) < 1000) {
+                                            stopLocationUpdates();
+                                            mCount = 0;
+                                            progressDialog.dismiss();
+                                            myApplication.setmCurrentResource(myLocations.get(i));
+                                            showAlertDialogSuccess();
                             } else {
                                 mCount++;
                             }
