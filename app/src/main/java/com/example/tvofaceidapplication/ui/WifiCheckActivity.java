@@ -64,6 +64,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         mMyLocation = myApplication.getmCurrentResource();
         myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
         createDialogData();
+        getData();
     }
 
     @Override
@@ -73,6 +74,32 @@ public class WifiCheckActivity extends AppCompatActivity {
         showLoading();
     }
 
+    public void getData(){
+        myFirebase.getEmployee(new MyFirebase.GetEmployeeCallback() {
+            @Override
+            public void onGetEmployeeSuccess(List<MyEmployee> list, List<String> idEmployee) {
+                id_employee = idEmployee.get(0);
+                name_employee = list.get(0).getName();
+                Log.e("TAG",list.get(0).getName());
+            }
+            @Override
+            public void onGetEmployeeError(Exception err) {
+            }
+        });
+        myFirebase.getLocation(new MyFirebase.LocationCallback() {
+            @Override
+            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
+                for(int i =0;i<list.size();i++){
+                    if(list.get(i).getWifi_ssid().equals(mMyLocation.getWifi_ssid())){
+                        id_location = idLocation.get(i);
+                    }
+                }
+            }
+            @Override
+            public void onGetLocationError(Exception err) {
+            }
+        });
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -179,30 +206,6 @@ public class WifiCheckActivity extends AppCompatActivity {
     }
 
     public void startSuccess(View view) {
-        myFirebase.getEmployee(new MyFirebase.GetEmployeeCallback() {
-            @Override
-            public void onGetEmployeeSuccess(List<MyEmployee> list, List<String> idEmployee) {
-                id_employee = idEmployee.get(0);
-                name_employee = list.get(0).getName();
-                Log.e("TAG",list.get(0).getName());
-            }
-            @Override
-            public void onGetEmployeeError(Exception err) {
-            }
-        });
-        myFirebase.getLocation(new MyFirebase.LocationCallback() {
-            @Override
-            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
-                for(int i =0;i<list.size();i++){
-                    if(list.get(i).getWifi_ssid().equals(mMyLocation.getWifi_ssid())){
-                        id_location = idLocation.get(i);
-                    }
-                }
-            }
-            @Override
-            public void onGetLocationError(Exception err) {
-            }
-        });
         showAlertDialogAllSuccess();
     }
     public void getTimeKeeping(){
