@@ -1,14 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.searchcontract.SearchContractFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <include layout="@layout/view_toolbar" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/fragment_search_contract" />
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
-</FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:background="@color/colorBackgroundSearchView"
+            android:padding="@dimen/default_padding_small">
+
+            <ImageButton
+                android:id="@+id/search_contract_search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/default_margin_small"
+                android:backgroundTint="@color/colorBlueSearchButton"
+                android:padding="@dimen/default_padding_medium"
+                android:scrollbarSize="0dp"
+                android:src="@drawable/ic_search"
+                tools:ignore="ContentDescription" />
+
+            <EditText
+                android:id="@+id/search_contract_contractId"
+                style="@style/CustomEdittext_InfUser"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_toStartOf="@id/search_contract_search"
+                android:background="@drawable/radius_edt"
+                android:enabled="true"
+                android:hint="@string/search_contract"
+                android:inputType="textCapCharacters"
+                android:padding="@dimen/default_padding_small"
+                android:textAllCaps="true"
+                tools:ignore="Autofill,TextFields" />
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_contract_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</LinearLayout>

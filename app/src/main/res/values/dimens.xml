@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <dimen name="text_size_title">20sp</dimen>
+
     <dimen name="logo_height">160dp</dimen>
     <dimen name="logo_margin">60dp</dimen>
+
+    <dimen name="default_height_search_view">72dp</dimen>
 
     <dimen name="default_margin_large">24dp</dimen>
     <dimen name="default_margin_medium">16dp</dimen>
@@ -11,5 +16,16 @@
     <dimen name="default_padding_medium">16dp</dimen>
     <dimen name="default_padding_small">8dp</dimen>
 
+    <dimen name="default_radius_large">24dp</dimen>
+    <dimen name="default_radius_medium">16dp</dimen>
+    <dimen name="default_radius_small">8dp</dimen>
+
+    <dimen name="default_padding_edt">12dp</dimen>
+
+
     <dimen name="default_size_button_camera">60dp</dimen>
+
+    <dimen name="default_size_img_customer">60dp</dimen>
+
+
 </resources>

@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.base.BaseFragment;
 
-public class LendingFragment extends Fragment {
+public class LendingFragment extends BaseFragment {
 
     public LendingFragment() {
         // Required empty public constructor
@@ -28,6 +29,10 @@ public class LendingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lending, container, false);
+        View view = inflater.inflate(R.layout.fragment_lending, container, false);
+        // Set Toolbar
+        setBaseToolbar((Toolbar) view.findViewById(R.id.toolbar));
+        getBaseToolbar().onSetTitle("Tạo khoản vay mới");
+        return view;
     }
 }

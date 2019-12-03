@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/default_margin_small"
+    android:background="@drawable/border_radius_linearlayout"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding_small">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/detail_contract_number_title"
+            style="@style/CustomTextview_Contract_Des"
+            android:text="@string/text_contract_number_title" />
+
+        <TextView
+            android:id="@+id/detail_contract_number"
+            style="@style/CustomTextview_Contract"
+            android:layout_toEndOf="@id/detail_contract_number_title"
+            android:text="@string/text_contract_id_example"
+            android:textAlignment="textEnd" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/detail_contract_created_at_title"
+            style="@style/CustomTextview_Contract_Des"
+            android:text="@string/text_date_sign_contract_title" />
+
+        <TextView
+            android:id="@+id/detail_contract_created_at"
+            style="@style/CustomTextview_Contract"
+            android:layout_toEndOf="@id/detail_contract_created_at_title"
+            android:text="@string/text_created_time_example"
+            android:textAlignment="textEnd" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/detail_contract_status_title"
+            style="@style/CustomTextview_Contract_Des"
+            android:text="@string/text_status_contract_title" />
+
+        <TextView
+            android:id="@+id/detail_contract_status"
+            style="@style/CustomTextview_Contract"
+            android:layout_toEndOf="@id/detail_contract_status_title"
+            android:text="@string/text_status_pending"
+            android:textAlignment="textEnd"
+            android:textAllCaps="false" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/detail_contract_store_name_title"
+            style="@style/CustomTextview_Contract_Des"
+            android:text="@string/text_store_name_title" />
+
+        <TextView
+            android:id="@+id/detail_contract_store_name"
+            style="@style/CustomTextview_Contract"
+            android:layout_toEndOf="@id/detail_contract_store_name_title"
+            android:text="@string/text_store_name_example"
+            android:textAlignment="textEnd" />
+
+    </RelativeLayout>
+
+</LinearLayout>

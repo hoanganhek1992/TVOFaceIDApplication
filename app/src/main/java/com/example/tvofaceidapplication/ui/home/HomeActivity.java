@@ -1,16 +1,21 @@
 package com.example.tvofaceidapplication.ui.home;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailActivity;
+import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailFragment;
 import com.example.tvofaceidapplication.ui.lending.LendingFragment;
 import com.example.tvofaceidapplication.ui.searchcontract.SearchContractFragment;
 import com.example.tvofaceidapplication.ui.timekeeping.TimeKeepingFragment;
@@ -19,15 +24,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    public static boolean isLogin = false;
+    public static boolean isLogin = true;
     FragmentManager mFragmentManager;
     Fragment mCurrentFragment;
+    ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        mActionBar = getSupportActionBar();
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         mFragmentManager = getSupportFragmentManager();
 
@@ -58,6 +64,8 @@ public class HomeActivity extends AppCompatActivity {
         });
         setDefaultRuleBottomNavigation(savedInstanceState);
 
+        setTitle("mặc định");
+
     }
 
     public void setDefaultRuleBottomNavigation(Bundle savedInstanceState) {
@@ -72,7 +80,17 @@ public class HomeActivity extends AppCompatActivity {
         mCurrentFragment = fragment;
         mFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_fragment, mCurrentFragment, "TimeKeepingFragment")
+                .replace(R.id.main_fragment, mCurrentFragment, "changeFragment")
                 .commit();
     }
+
+    public void addNewDetailsFragment(Fragment fragment) {
+        mFragmentManager.beginTransaction().add(R.id.activity_container, fragment, "addNewDetailsFragment")
+                .commit();
+    }
+
+    public void startNewActivity(){
+        startActivity(new Intent(HomeActivity.this, ContractDetailActivity.class));
+    }
+
 }

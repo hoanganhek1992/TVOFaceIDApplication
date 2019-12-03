@@ -16,16 +16,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppThemeFullScreen"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity
-            android:name=".ui.splash.SplashScreen"
-            android:theme="@style/AppThemeFullScreen">
-            <!--<intent-filter>
+        <activity android:name=".ui.contract_detail.ContractDetailActivity"></activity>
+        <activity android:name=".ui.splash.SplashScreen">
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
@@ -39,7 +41,8 @@
         <activity android:name=".ui.WifiCheckActivity" />
         <activity android:name=".ui.TimeKeepingActivity" />
         <activity android:name=".ui.LendingActivity" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".ui.contract_detail.ContractDetailFragment" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
