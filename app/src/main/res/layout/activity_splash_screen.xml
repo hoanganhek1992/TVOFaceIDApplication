@@ -12,6 +12,7 @@
         android:layout_above="@+id/tv_demo_version"
         android:layout_margin="@dimen/logo_margin"
         android:scaleType="fitCenter"
+        android:src="@drawable/logo_hdsaison_withtext"
         tools:ignore="ContentDescription" />
 
     <TextView

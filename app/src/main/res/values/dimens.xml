@@ -25,7 +25,11 @@
 
     <dimen name="default_size_button_camera">60dp</dimen>
 
-    <dimen name="default_size_img_customer">60dp</dimen>
+    <dimen name="default_size_img_customer">80dp</dimen>
+    <dimen name="default_width_cmnd">150dp</dimen>
+    <dimen name="default_height_cmnd">100dp</dimen>
+
+    <dimen name="default_size_fab_button">40dp</dimen>
 
 
 </resources>

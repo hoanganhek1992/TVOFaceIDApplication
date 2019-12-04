@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
@@ -52,7 +49,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static java.lang.Double.parseDouble;
@@ -167,7 +163,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
 
         myFirebase.getLocation(new MyFirebase.LocationCallback() {
             @Override
-            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
+            public void onGetLocationSuccess(List<MyLocation> list) {
                 myLocations.addAll(list);
             }
 
@@ -182,10 +178,10 @@ public class TimeKeepingActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void showAlertDialogSuccess() {
         try {
-            DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
             String date = df.format(Calendar.getInstance().getTime());
             timeCurrent.setText("Thời gian: " + date);
-            locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentResource().getName());
+            locationCurrent.setText("Địa chỉ: " + myApplication.getmCurrentLoation().getName());
             successDialog.show();
         } catch (Exception ignored) {
         }
@@ -231,7 +227,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     }
 
     public void startSuccess(View view) {
-        if (myApplication.getmCurrentResource() != null) {
+        if (myApplication.getmCurrentLoation() != null) {
             successDialog.dismiss();
             Intent intent = new Intent(TimeKeepingActivity.this, WifiCheckActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -286,7 +282,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
                                             stopLocationUpdates();
                                             mCount = 0;
                                             progressDialog.dismiss();
-                                            myApplication.setmCurrentResource(myLocations.get(i));
+                                            myApplication.setmCurrentLoation(myLocations.get(i));
                                             showAlertDialogSuccess();
                             } else {
                                 mCount++;

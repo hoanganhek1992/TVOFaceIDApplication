@@ -8,9 +8,16 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseFragment;
+import com.example.tvofaceidapplication.ui.home.HomeActivity;
+import com.google.android.material.button.MaterialButton;
 
-public class LendingFragment extends BaseFragment {
+import java.util.Objects;
+
+public class LendingFragment extends BaseFragment implements View.OnClickListener {
+
+    MaterialButton mContinueButton;
 
     public LendingFragment() {
         // Required empty public constructor
@@ -33,6 +40,15 @@ public class LendingFragment extends BaseFragment {
         // Set Toolbar
         setBaseToolbar((Toolbar) view.findViewById(R.id.toolbar));
         getBaseToolbar().onSetTitle("Tạo khoản vay mới");
+        view.findViewById(R.id.lending_continue).setOnClickListener(this);
+
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.lending_continue) {
+            ((HomeActivity) Objects.requireNonNull(getActivity())).startNewActivity(BaseActivity.ACTIVITY_ADD_NEW_LENDING);
+        }
     }
 }

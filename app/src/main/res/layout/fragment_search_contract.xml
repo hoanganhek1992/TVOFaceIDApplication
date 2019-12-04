@@ -42,6 +42,7 @@
                 android:background="@drawable/radius_edt"
                 android:enabled="true"
                 android:hint="@string/search_contract"
+                android:imeOptions="actionDone"
                 android:inputType="textCapCharacters"
                 android:padding="@dimen/default_padding_small"
                 android:textAllCaps="true"

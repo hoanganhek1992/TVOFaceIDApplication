@@ -1,10 +1,5 @@
 package com.example.tvofaceidapplication.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -22,6 +17,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.tvofaceidapplication.MainActivity;
 import com.example.tvofaceidapplication.Model.MyEmployee;
 import com.example.tvofaceidapplication.Model.MyLocation;
@@ -31,7 +31,6 @@ import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,17 +50,18 @@ public class WifiCheckActivity extends AppCompatActivity {
     AlertDialog successDialog;
     AlertDialog errorDialog;
     AlertDialog alertDialogAll;
-    TextView timeCurrent,txtWifiname,name,nameLocation,timeCurrent2,txtWifiname2;
+    TextView timeCurrent, txtWifiname, name, nameLocation, timeCurrent2, txtWifiname2;
     MyFirebase myFirebase;
     MyTimeKeeping keeping;
-    private String id_employee,name_employee,id_location;
+    private String id_employee, name_employee, id_location;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_check);
         myApplication = MyApplication.getInstance();
-        keeping =  new MyTimeKeeping();
-        mMyLocation = myApplication.getmCurrentResource();
+        keeping = new MyTimeKeeping();
+        mMyLocation = myApplication.getmCurrentLoation();
         myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
         createDialogData();
     }
@@ -86,7 +86,7 @@ public class WifiCheckActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(!successDialog.isShowing() || !alertDialogAll.isShowing()){
+        if (!successDialog.isShowing() || !alertDialogAll.isShowing()) {
             super.onBackPressed();
         }
     }
@@ -116,7 +116,7 @@ public class WifiCheckActivity extends AppCompatActivity {
 
         View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_success, viewGroup, false);
         timeCurrent = viewSuccess.findViewById(R.id.txtTimeCurent);
-        txtWifiname =viewSuccess.findViewById(R.id.txtLocation);
+        txtWifiname = viewSuccess.findViewById(R.id.txtLocation);
         builder.setView(viewSuccess);
         successDialog = builder.create();
         successDialog.setCanceledOnTouchOutside(false);
@@ -135,15 +135,15 @@ public class WifiCheckActivity extends AppCompatActivity {
     }
 
 
-
     private void showLoading() {
         if (successDialog != null && successDialog.isShowing()) {
             successDialog.dismiss();
         }
         progressDialog.show();
     }
+
     @SuppressLint("SetTextI18n")
-    public void showAlertDialogSuccess(){
+    public void showAlertDialogSuccess() {
         try {
             timeCurrent.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
             txtWifiname.setText(mMyLocation.getWifi_ssid());
@@ -155,9 +155,9 @@ public class WifiCheckActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    public void showAlertDialogAllSuccess(){
+    public void showAlertDialogAllSuccess() {
         try {
-            timeCurrent2.setText("Thời gian: "+ DateFormat.getTimeInstance().format(new Date()));
+            timeCurrent2.setText("Thời gian: " + DateFormat.getTimeInstance().format(new Date()));
             //Need update
             name.setText(name_employee.trim());
             nameLocation.setText(mMyLocation.getName());
@@ -168,7 +168,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         }
     }
 
-    public void showAlertDialogError(){
+    public void showAlertDialogError() {
         try {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -181,37 +181,39 @@ public class WifiCheckActivity extends AppCompatActivity {
     public void startSuccess(View view) {
         myFirebase.getEmployee(new MyFirebase.GetEmployeeCallback() {
             @Override
-            public void onGetEmployeeSuccess(List<MyEmployee> list, List<String> idEmployee) {
-                id_employee = idEmployee.get(0);
+            public void onGetEmployeeSuccess(List<MyEmployee> list) {
                 name_employee = list.get(0).getName();
-                Log.e("TAG",list.get(0).getName());
+                Log.e("TAG", list.get(0).getName());
             }
+
             @Override
             public void onGetEmployeeError(Exception err) {
             }
         });
         myFirebase.getLocation(new MyFirebase.LocationCallback() {
             @Override
-            public void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation) {
-                for(int i =0;i<list.size();i++){
-                    if(list.get(i).getWifi_ssid().equals(mMyLocation.getWifi_ssid())){
-                        id_location = idLocation.get(i);
+            public void onGetLocationSuccess(List<MyLocation> list) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getWifi_ssid().equals(mMyLocation.getWifi_ssid())) {
+                        id_location = list.get(i).getId();
                     }
                 }
             }
+
             @Override
             public void onGetLocationError(Exception err) {
             }
         });
         showAlertDialogAllSuccess();
     }
-    public void getTimeKeeping(){
-        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+
+    public void getTimeKeeping() {
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String date = df.format(Calendar.getInstance().getTime());
         keeping.setEmployee_id(id_employee);
         keeping.setCreated_at(date);
         keeping.setLocation_id(id_location);
-       myFirebase.addTimeKepping(keeping, new MyFirebase.TimeKeepingCallback() {
+        myFirebase.addTimeKepping(keeping, new MyFirebase.TimeKeepingCallback() {
             @Override
             public void onAddTimeKeepingSuccess() {
                 progressDialog.dismiss();
@@ -223,14 +225,15 @@ public class WifiCheckActivity extends AppCompatActivity {
         });
     }
 
-    public void startSuccessAll(View view){
+    public void startSuccessAll(View view) {
         successDialog.dismiss();
         alertDialogAll.dismiss();
-        if (myApplication.getmCurrentResource() != null) {
+        if (myApplication.getmCurrentLoation() != null) {
             progressDialog.show();
             getTimeKeeping();
         }
     }
+
     public void startError(View view) {
         if (errorDialog != null && errorDialog.isShowing()) {
             errorDialog.dismiss();
@@ -238,19 +241,19 @@ public class WifiCheckActivity extends AppCompatActivity {
         progressDialog.show();
         getWifi();
     }
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
         receiverWifi = new WifiReceiver(wifiManager, new WifiReceiver.WifiCalback() {
             @Override
             public void onGetListWifiSuccess(ArrayList<String> arrayList) {
-                for(int i = 0;i<arrayList.size();i++){
-                    if(arrayList.get(i).equals(mMyLocation.getWifi_ssid())){
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (arrayList.get(i).equals(mMyLocation.getWifi_ssid())) {
                         progressDialog.dismiss();
                         showAlertDialogSuccess();
                         break;
-                    }
-                    else{
+                    } else {
                         showAlertDialogError();
                     }
                 }
@@ -266,6 +269,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         registerReceiver(receiverWifi, intentFilter);
         getWifi();
     }
+
     private void getWifi() {
         if (ContextCompat.checkSelfPermission(WifiCheckActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -275,11 +279,13 @@ public class WifiCheckActivity extends AppCompatActivity {
             wifiManager.startScan();
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiverWifi);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

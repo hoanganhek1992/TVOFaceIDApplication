@@ -27,6 +27,7 @@ public class MyFirebase {
     private FirebaseFirestore mDatabase;
 
     private static MyFirebase myFirebase;
+
     public static MyFirebase getInstance(FirebaseFirestore mDatabase) {
         if (myFirebase == null) {
             myFirebase = new MyFirebase(mDatabase);
@@ -39,7 +40,7 @@ public class MyFirebase {
     }
 
     public void addEmployee(MyEmployee employee, final AddEmployeeCallback callback) {
-        mDatabase.collection(TABLE_EMPLOYEE).document(System.currentTimeMillis() + "").set(employee).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mDatabase.collection(TABLE_EMPLOYEE).document(employee.getId()).set(employee).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onAddEmployeeSuccess();
@@ -48,21 +49,17 @@ public class MyFirebase {
     }
 
 
-
     public void getEmployee(final GetEmployeeCallback callback) {
         mDatabase.collection(TABLE_EMPLOYEE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    List<String> IdEmployee = new ArrayList<>();
                     List<MyEmployee> myEmployeeList = new ArrayList<>();
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        String id = document.getId();
-                        IdEmployee.add(id);
                         MyEmployee employee = document.toObject(MyEmployee.class);
                         myEmployeeList.add(employee);
                     }
-                    callback.onGetEmployeeSuccess(myEmployeeList, IdEmployee);
+                    callback.onGetEmployeeSuccess(myEmployeeList);
                 } else {
                     callback.onGetEmployeeError(task.getException());
                 }
@@ -75,15 +72,12 @@ public class MyFirebase {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    List<String> IdLocation = new ArrayList<>();
                     List<MyLocation> myLocationList = new ArrayList<>();
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        String id = document.getId();
-                        IdLocation.add(id);
                         MyLocation locations = document.toObject(MyLocation.class);
                         myLocationList.add(locations);
                     }
-                    callback. onGetLocationSuccess(myLocationList,IdLocation);
+                    callback.onGetLocationSuccess(myLocationList);
                 } else {
                     callback.onGetLocationError(task.getException());
                 }
@@ -100,13 +94,14 @@ public class MyFirebase {
         });
     }
 
-    public void addLending(MyLending lending,final LendingCallback callback){
+    public void addLending(MyLending lending, final LendingCallback callback) {
         mDatabase.collection(TABLE_LENDING).document(System.currentTimeMillis() + "").set(lending).addOnSuccessListener(new OnSuccessListener<Void>() {
-        @Override
-        public void onSuccess(Void aVoid) {
-            callback.onAddLendingSuccess();
-        }
-    });}
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onAddLendingSuccess();
+            }
+        });
+    }
 
     public interface AddEmployeeCallback {
 
@@ -115,17 +110,19 @@ public class MyFirebase {
     }
 
     public interface GetEmployeeCallback {
-        void onGetEmployeeSuccess(List<MyEmployee> list, List<String> idEmployee);
+        void onGetEmployeeSuccess(List<MyEmployee> list);
 
         void onGetEmployeeError(Exception err);
 
     }
+
     public interface LendingCallback {
         void onAddLendingSuccess();
     }
 
     public interface LocationCallback {
-        void onGetLocationSuccess(List<MyLocation> list, List<String> idLocation);
+        void onGetLocationSuccess(List<MyLocation> list);
+
         void onGetLocationError(Exception err);
     }
 

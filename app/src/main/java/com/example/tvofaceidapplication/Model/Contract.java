@@ -2,8 +2,10 @@ package com.example.tvofaceidapplication.Model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 @IgnoreExtraProperties
-public class Contract {
+public class Contract implements Serializable {
 
     String id, name, created_at, status;
 

@@ -26,9 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_camera"
-                android:tint="@color/grayDark"
                 tools:ignore="ContentDescription" />
 
 
@@ -54,7 +53,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/default_margin_large"
-                    android:src="@drawable/avatar"
+                    android:src="@drawable/ic_person_2"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="1dp" />
 
@@ -90,8 +89,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/time_keeping_name"
-                    style="@style/CustomEdittext_InfUser"
-                    android:text="@string/text_name_example" />
+                    style="@style/CustomEdittext_InfUser" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

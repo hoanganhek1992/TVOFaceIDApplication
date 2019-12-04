@@ -52,7 +52,7 @@ public class ListEmployeeActivity extends AppCompatActivity {
         progressDialog.show();
         myFirebase.getEmployee(new MyFirebase.GetEmployeeCallback() {
             @Override
-            public void onGetEmployeeSuccess(List<MyEmployee> list, List<String> Id) {
+            public void onGetEmployeeSuccess(List<MyEmployee> list) {
                 myEmployees.clear();
                 myEmployees.addAll(list);
                 adapter.notifyDataSetChanged();

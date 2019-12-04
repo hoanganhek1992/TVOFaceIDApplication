@@ -1,47 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.lending.LendingFragment">
+    android:background="@color/white"
+    tools:context=".ui.new_lending.addnew.NewLendingActivity">
 
-    <include layout="@layout/view_toolbar" />
+    <include
+        android:id="@+id/view_my_toolbar"
+        layout="@layout/view_toolbar" />
+
+    <include
+        android:id="@+id/view_matching_img"
+        layout="@layout/view_check_matching_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_my_toolbar"
+        android:layout_margin="@dimen/default_margin_small" />
+
+    <TextView
+        android:id="@+id/lending_title"
+        style="@style/CustomTextview_YellowTitle"
+        android:layout_below="@+id/view_matching_img"
+        android:text="@string/text_customer_inf_title"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
-
-        <TextView
-            android:id="@+id/lending_title"
-            style="@style/CustomTextview_YellowTitle"
-            android:text="@string/text_lending_title"/>
+        android:layout_below="@+id/lending_title">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/lending_continue"
-            android:layout_below="@id/lending_title">
+            android:layout_above="@+id/new_lending_continue"
+            android:padding="@dimen/default_margin_small">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/default_padding_small"
-                tools:ignore="UselessLeaf">
+                android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/CustomTextView_Lending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/text_loan_purpose">
+                    android:hint="@string/text_fullname_title">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_loan_purpose"
+                        android:id="@+id/new_lending_name"
                         style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_motorbike"
                         android:textColor="@color/grayDark"
                         android:textStyle="normal" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -50,12 +58,11 @@
                     style="@style/CustomTextView_Lending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/text_product_title">
+                    android:hint="@string/text_birth_date_title">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_product_name"
+                        android:id="@+id/new_lending_birthdate"
                         style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_honda"
                         android:textColor="@color/grayDark"
                         android:textStyle="normal" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -64,64 +71,43 @@
                     style="@style/CustomTextView_Lending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/text_product_price">
+                    android:hint="@string/text_cmnd_title">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_product_price"
+                        android:id="@+id/new_lending_cmnd"
                         style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_price_32m" />
+                        android:textColor="@color/grayDark"
+                        android:textStyle="normal" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/CustomTextView_Lending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/text_tenor">
+                    android:hint="@string/text_address_title">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_tenor"
+                        android:id="@+id/new_lending_address"
                         style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_6_months" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/CustomTextView_Lending"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/text_prepaid_amount">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_prepaid_amount"
-                        style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_10m" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/CustomTextView_Lending"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/text_pair_per_month">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lending_paid_per_month"
-                        style="@style/CustomEdittext_Lending"
-                        android:text="@string/text_1m" />
+                        android:textColor="@color/grayDark"
+                        android:textStyle="normal" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
         </ScrollView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/lending_continue"
+            android:id="@+id/new_lending_continue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/default_margin_medium"
+            android:layout_marginStart="@dimen/default_margin_large"
+            android:layout_marginEnd="@dimen/default_margin_large"
             android:backgroundTint="@color/blue"
             android:padding="@dimen/default_margin_medium"
             android:text="@string/text_continue"
             app:cornerRadius="@dimen/default_radius_large" />
-
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

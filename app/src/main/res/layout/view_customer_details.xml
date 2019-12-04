@@ -15,14 +15,14 @@
         tools:ignore="UselessParent">
 
         <TextView
-            android:id="@+id/detail_contract_custommer_name_title"
+            android:id="@+id/detail_contract_customer_name_title"
             style="@style/CustomTextview_Contract_Des"
             android:text="@string/text_customer_name_title" />
 
         <TextView
-            android:id="@+id/detail_contract_custommer_name"
+            android:id="@+id/detail_contract_customer_name"
             style="@style/CustomTextview_Contract_2"
-            android:layout_toEndOf="@id/detail_contract_custommer_name_title"
+            android:layout_toEndOf="@id/detail_contract_customer_name_title"
             android:text="@string/text_name_example"
             android:textAlignment="textEnd" />
 

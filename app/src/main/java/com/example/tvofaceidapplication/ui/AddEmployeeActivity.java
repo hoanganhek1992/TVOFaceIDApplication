@@ -1,7 +1,6 @@
 package com.example.tvofaceidapplication.ui;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -11,7 +10,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,10 +31,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 public class AddEmployeeActivity extends AppCompatActivity {
@@ -51,6 +46,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
     MyFirebase myFirebase;
     AlertDialog successDialog;
     ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,11 +89,12 @@ public class AddEmployeeActivity extends AppCompatActivity {
         } catch (Exception ignored) {
         }
     }
+
     private void uploadData() {
         DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String date = df.format(Calendar.getInstance().getTime());
         progressDialog.show();
-        myEmployee = new MyEmployee(edtName.getText().toString().trim(), BitMapToString(photo),date);
+        myEmployee = new MyEmployee(System.currentTimeMillis() + "", edtName.getText().toString().trim(), BitMapToString(photo), date);
         myFirebase.addEmployee(myEmployee, new MyFirebase.AddEmployeeCallback() {
             @Override
             public void onAddEmployeeSuccess() {
@@ -106,13 +103,15 @@ public class AddEmployeeActivity extends AppCompatActivity {
             }
         });
     }
-    public void startSuccess(View view){
-            successDialog.dismiss();
-            Intent intent = new Intent(AddEmployeeActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+
+    public void startSuccess(View view) {
+        successDialog.dismiss();
+        Intent intent = new Intent(AddEmployeeActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
+
     private void processImage() {
         if (hasCameraPermission()) {
             pickImage();
@@ -124,13 +123,13 @@ public class AddEmployeeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0){
+        if (resultCode != 0) {
             if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
                 photo = (Bitmap) data.getExtras().get("data");
                 imgEmployee.setImageBitmap(photo);
                 BitMapToString(photo);
             }
-    }
+        }
     }
 
     public String BitMapToString(Bitmap bitmap) {

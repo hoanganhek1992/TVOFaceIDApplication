@@ -53,7 +53,7 @@ public class SearchContractFragment extends BaseFragment {
             @Override
             public void onItemClick(Contract contract) {
                 //Toast.makeText(getContext(), contract.getId() + "", Toast.LENGTH_SHORT).show();
-                ((HomeActivity) Objects.requireNonNull(getActivity())).startNewActivity();
+                ((HomeActivity) Objects.requireNonNull(getActivity())).startContractDetail(contract);
             }
         });
         LinearLayoutManager layoutSubjectManager = new LinearLayoutManager(getContext());

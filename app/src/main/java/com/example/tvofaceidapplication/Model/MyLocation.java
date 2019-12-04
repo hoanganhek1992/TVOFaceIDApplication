@@ -1,13 +1,12 @@
 package com.example.tvofaceidapplication.Model;
 
-import android.location.Location;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 
 @IgnoreExtraProperties
 public class MyLocation implements Serializable {
+    private String id;
     private String wifi_ssid;
     private String latitude;
     private String longtitude;
@@ -16,11 +15,20 @@ public class MyLocation implements Serializable {
     public MyLocation() {
     }
 
-    public MyLocation( String wifiname, String latitude,String longtitude, String name) {
-        wifi_ssid = wifiname;
+    public MyLocation(String id, String wifiname, String latitude, String longtitude, String name) {
+        this.id = id;
+        this.wifi_ssid = wifiname;
         this.latitude = latitude;
         this.longtitude = longtitude;
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getWifi_ssid() {

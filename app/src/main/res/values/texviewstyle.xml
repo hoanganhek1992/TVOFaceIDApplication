@@ -61,6 +61,7 @@
     </style>
 
     <style name="CustomTextView_Lending" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:layout_marginBottom">0dp</item>
         <item name="boxBackgroundColor">@color/white</item>
     </style>
 
@@ -71,9 +72,24 @@
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:padding">@dimen/default_padding_medium</item>
+        <item name="android:layout_margin">0dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
         <item name="android:enabled">true</item>
+    </style>
+
+    <style name="CustomTextview_YellowTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/grayDark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@color/yellow</item>
+        <item name="android:padding">@dimen/default_padding_medium</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 
