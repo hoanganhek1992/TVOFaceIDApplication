@@ -27,7 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.Model.MyLending;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.google.android.material.snackbar.Snackbar;

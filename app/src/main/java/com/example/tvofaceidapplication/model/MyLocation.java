@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication.Model;
+package com.example.tvofaceidapplication.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

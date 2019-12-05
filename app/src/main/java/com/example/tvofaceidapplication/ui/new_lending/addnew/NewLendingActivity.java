@@ -14,7 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.tvofaceidapplication.Model.MyLending;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseToolbar;

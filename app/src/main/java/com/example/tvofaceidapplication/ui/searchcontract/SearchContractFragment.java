@@ -11,8 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tvofaceidapplication.Adapter.ContractAdapter;
-import com.example.tvofaceidapplication.Model.MyLending;
+import com.example.tvofaceidapplication.adapter.ContractAdapter;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseFragment;
 import com.example.tvofaceidapplication.firebase.MyFirebase;

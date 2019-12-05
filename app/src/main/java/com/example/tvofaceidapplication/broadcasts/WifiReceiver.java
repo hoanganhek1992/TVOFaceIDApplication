@@ -11,8 +11,16 @@ import java.util.List;
 
 public class WifiReceiver extends BroadcastReceiver {
 
+    public static WifiReceiver mWifiReceive;
     WifiManager wifiManager;
     WifiCalback mCallback;
+
+    public static WifiReceiver getInstance(WifiManager wifiManager, WifiCalback calback){
+        if(mWifiReceive == null){
+            mWifiReceive = new WifiReceiver(wifiManager, calback);
+        }
+        return mWifiReceive;
+    }
 
     public WifiReceiver(WifiManager wifiManager, WifiCalback calback) {
         this.wifiManager = wifiManager;

@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication.Adapter;
+package com.example.tvofaceidapplication.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tvofaceidapplication.Model.Contract;
-import com.example.tvofaceidapplication.Model.MyLending;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.R;
 
 import java.util.List;

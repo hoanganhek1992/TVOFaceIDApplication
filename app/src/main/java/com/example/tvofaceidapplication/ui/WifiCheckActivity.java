@@ -23,13 +23,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.Model.MyEmployee;
-import com.example.tvofaceidapplication.Model.MyLocation;
-import com.example.tvofaceidapplication.Model.MyTimeKeeping;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.example.tvofaceidapplication.model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyLocation;
+import com.example.tvofaceidapplication.model.MyTimeKeeping;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;

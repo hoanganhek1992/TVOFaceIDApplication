@@ -1,6 +1,9 @@
 package com.example.tvofaceidapplication.base;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -23,6 +26,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -39,6 +45,8 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public static final String CONTRACT_OBJECT = "contract_object";
+    public static final String SAVE_DATA_LOGIN = "save_data_login";
+    public static final String SAVE_WIFI_SSID_LOGIN = "save_wifi_ssid_login";
 
     private BaseToolbar baseToolbar;
 
@@ -135,5 +143,23 @@ public class BaseActivity extends AppCompatActivity {
             return Base64.encodeToString(b, Base64.DEFAULT);
         }
         return null;
+    }
+
+    public void saveLoginSession(String wifi_name) {
+        Log.e("TAG", "saveLoginSession");
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(BaseActivity.SAVE_DATA_LOGIN, df.format(Calendar.getInstance().getTime()));
+        editor.putString(BaseActivity.SAVE_WIFI_SSID_LOGIN, wifi_name);
+
+        editor.apply();
+    }
+
+    public boolean isLogin() {
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        Log.e("TAG", "isLogin" + sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime())) + "");
+        return sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime()));
     }
 }

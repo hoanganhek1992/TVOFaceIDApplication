@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.Model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.google.firebase.firestore.FirebaseFirestore;

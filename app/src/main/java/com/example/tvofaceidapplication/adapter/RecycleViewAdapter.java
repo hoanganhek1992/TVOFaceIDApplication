@@ -1,4 +1,4 @@
-package com.example.tvofaceidapplication.Adapter;
+package com.example.tvofaceidapplication.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tvofaceidapplication.Model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.R;
 import java.util.List;
 

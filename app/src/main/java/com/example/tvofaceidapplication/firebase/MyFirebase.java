@@ -2,15 +2,14 @@ package com.example.tvofaceidapplication.firebase;
 
 import androidx.annotation.NonNull;
 
-import com.example.tvofaceidapplication.Model.MyEmployee;
-import com.example.tvofaceidapplication.Model.MyLending;
-import com.example.tvofaceidapplication.Model.MyLocation;
-import com.example.tvofaceidapplication.Model.MyTimeKeeping;
+import com.example.tvofaceidapplication.model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyLending;
+import com.example.tvofaceidapplication.model.MyLocation;
+import com.example.tvofaceidapplication.model.MyTimeKeeping;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;

@@ -23,7 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.tvofaceidapplication.Model.MyLocation;
+import com.example.tvofaceidapplication.model.MyLocation;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;

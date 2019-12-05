@@ -2,7 +2,10 @@ package com.example.tvofaceidapplication.ui.home;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +19,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
+import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
+import com.example.tvofaceidapplication.inteface.WifiStartCallback;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailActivity;
 import com.example.tvofaceidapplication.ui.lending.LendingFragment;
 import com.example.tvofaceidapplication.ui.new_lending.addnew.NewLendingActivity;
@@ -26,7 +31,9 @@ import com.example.tvofaceidapplication.ui.searchcontract.SearchContractFragment
 import com.example.tvofaceidapplication.ui.timekeeping.TimeKeepingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class HomeActivity extends BaseActivity {
+import java.util.ArrayList;
+
+public class HomeActivity extends BaseActivity implements WifiStartCallback {
 
     BottomNavigationView bottomNavigationView;
     public static boolean isLogin = false;
@@ -36,6 +43,10 @@ public class HomeActivity extends BaseActivity {
     ProgressDialog mProgress;
 
     AlertDialog mSuccessDialog, mErrorDialog;
+
+    //Variable to get and check Wifi SSID
+    private WifiManager wifiManager;
+    private WifiReceiver receiverWifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,16 +108,23 @@ public class HomeActivity extends BaseActivity {
                 return true;
             }
         });
-        setDefaultRuleBottomNavigation(savedInstanceState);
+        setDefaultRuleBottomNavigation();
         setTitle("mặc định");
 
         createDialogData();
     }
 
-    public void setDefaultRuleBottomNavigation(Bundle savedInstanceState) {
-        bottomNavigationView.setSelectedItemId(R.id.item_time_keeping);
-        if (savedInstanceState == null) {
-            changeFragment(TimeKeepingFragment.newInstance());
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isLogin = isLogin();
+    }
+
+    public void setDefaultRuleBottomNavigation() {
+        if (!isLogin()) {
+            bottomNavigationView.setSelectedItemId(R.id.item_time_keeping);
+        } else {
+            bottomNavigationView.setSelectedItemId(R.id.item_new_lending);
         }
     }
 
@@ -197,5 +215,29 @@ public class HomeActivity extends BaseActivity {
             mProgress.dismiss();
             mErrorDialog.show();
         }
+    }
+
+    public void checkWifiSSID(WifiReceiver.WifiCalback calback) {
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert wifiManager != null;
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+        }
+
+        receiverWifi = new WifiReceiver(wifiManager, calback);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        registerReceiver(receiverWifi, intentFilter);
+        wifiManager.startScan();
+    }
+
+    @Override
+    public void onWifiStartSucces(ArrayList<String> arrayList) {
+
+    }
+
+    @Override
+    public void onWifiStartError() {
+
     }
 }

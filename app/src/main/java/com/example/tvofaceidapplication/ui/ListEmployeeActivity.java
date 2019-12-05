@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tvofaceidapplication.Adapter.RecycleViewAdapter;
-import com.example.tvofaceidapplication.Model.MyEmployee;
+import com.example.tvofaceidapplication.adapter.RecycleViewAdapter;
+import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.google.firebase.firestore.FirebaseFirestore;

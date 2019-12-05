@@ -2,8 +2,8 @@ package com.example.tvofaceidapplication;
 
 import android.app.Application;
 
-import com.example.tvofaceidapplication.Model.MyEmployee;
-import com.example.tvofaceidapplication.Model.MyLocation;
+import com.example.tvofaceidapplication.model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyLocation;
 
 public class MyApplication extends Application {
 
