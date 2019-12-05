@@ -2,23 +2,35 @@ package com.example.tvofaceidapplication.Model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-@IgnoreExtraProperties
-public class MyLending {
+import java.io.Serializable;
 
-    private String name, address, phone, job, image, cmnd_1, cmnd_2, created_at;
+@IgnoreExtraProperties
+public class MyLending implements Serializable {
+
+    private String id, name, address, birth_date, cmnd, image, cmnd_1, cmnd_2, created_at, status, store = "ED HT ĐIỆN MÁY XANH 224", phone ="09336254243";
 
     public MyLending() {
     }
 
-    public MyLending(String name, String address, String phone, String job, String image, String cmnd_1, String cmnd_2, String created_at) {
+    public MyLending(String id, String name, String address, String birth_date, String cmnd, String image, String cmnd_1, String cmnd_2, String created_at, String status) {
+        this.id = id;
         this.name = name;
         this.address = address;
-        this.phone = phone;
-        this.job = job;
+        this.birth_date = birth_date;
+        this.cmnd = cmnd;
         this.image = image;
         this.cmnd_1 = cmnd_1;
         this.cmnd_2 = cmnd_2;
         this.created_at = created_at;
+        this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -37,20 +49,20 @@ public class MyLending {
         this.address = address;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getBirth_date() {
+        return birth_date;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setBirth_date(String birth_date) {
+        this.birth_date = birth_date;
     }
 
-    public String getJob() {
-        return job;
+    public String getCmnd() {
+        return cmnd;
     }
 
-    public void setJob(String job) {
-        this.job = job;
+    public void setCmnd(String cmnd) {
+        this.cmnd = cmnd;
     }
 
     public String getImage() {
@@ -83,5 +95,29 @@ public class MyLending {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStore() {
+        return store;
+    }
+
+    public void setStore(String store) {
+        this.store = store;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -18,10 +18,11 @@
     <string name="name_employee">Tên nhân viên: </string>
     <string name="loading_add_employee">Đang thêm thành viên ...</string>
     <string name="loading_add_lending">Đang xác nhận ...</string>
+    <string name="loading_list_lending">Đang tải danh sách hợp đồng ...</string>
     <string name="error_name">Nhập lại tên khách hàng.</string>
     <string name="error_address">Nhập lại địa chỉ.</string>
-    <string name="error_phone">Nhập lại số điện thoại.</string>
-    <string name="error_job">Nhập lại nghề nghiệp.</string>
+    <string name="error_cmnd">Nhập lại số CMND.</string>
+    <string name="error_birth_date">Nhập lại ngày sinh.</string>
     <string name="error_image">Thiếu hình ảnh.</string>
     <string name="hdsaison_slogan">Cùng HD SAISON\nđem ước mơ về nhà</string>
     <string name="demo_version">Demo Version</string>
@@ -74,6 +75,7 @@
     <string name="text_phone_example">0946228228</string>
     <string name="text_cmnd_example">246881004</string>
     <string name="text_save">Lưu</string>
+    <string name="text_saving">Đang lưu dữ liệu…</string>
     <string name="text_create_new">Tạo mới</string>
     <string name="text_check_matching">Phân tích</string>
     <string name="text_matched">Matched</string>

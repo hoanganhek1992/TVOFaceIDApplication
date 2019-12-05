@@ -23,7 +23,7 @@
         android:id="@+id/lending_title"
         style="@style/CustomTextview_YellowTitle"
         android:layout_below="@+id/view_matching_img"
-        android:text="@string/text_customer_inf_title"/>
+        android:text="@string/text_customer_inf_title" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -104,10 +104,11 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/default_margin_large"
             android:layout_marginEnd="@dimen/default_margin_large"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/mtrl_btn_bg_color_selector"
             android:padding="@dimen/default_margin_medium"
             android:text="@string/text_continue"
-            app:cornerRadius="@dimen/default_radius_large" />
+            app:cornerRadius="@dimen/default_radius_large"
+            tools:ignore="PrivateResource" />
     </RelativeLayout>
 
 </RelativeLayout>

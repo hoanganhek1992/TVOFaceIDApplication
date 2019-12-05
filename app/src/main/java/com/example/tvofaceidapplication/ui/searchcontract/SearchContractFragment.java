@@ -1,18 +1,21 @@
 package com.example.tvofaceidapplication.ui.searchcontract;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tvofaceidapplication.Adapter.ContractAdapter;
-import com.example.tvofaceidapplication.Model.Contract;
+import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseFragment;
+import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 
 import java.util.ArrayList;
@@ -23,7 +26,9 @@ public class SearchContractFragment extends BaseFragment {
 
     ContractAdapter mContractAdapter;
     RecyclerView mRecyclerView;
-    List<Contract> myLendingList;
+    List<MyLending> myLendingList;
+
+    ProgressDialog mProgressDialog;
 
     public SearchContractFragment() {
     }
@@ -46,22 +51,31 @@ public class SearchContractFragment extends BaseFragment {
         setBaseToolbar((Toolbar) view.findViewById(R.id.toolbar));
         getBaseToolbar().onSetTitle("Tra cứu hợp đồng");
 
+        mProgressDialog = new ProgressDialog(getContext());
+        mProgressDialog.setMessage(getResources().getString(R.string.loading_list_lending));
+        mProgressDialog.setCancelable(false);
+
         myLendingList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.search_contract_recyclerView);
         mContractAdapter = new ContractAdapter(myLendingList);
         mContractAdapter.setOnItemClickedListener(new ContractAdapter.OnItemClickedListener() {
             @Override
-            public void onItemClick(Contract contract) {
+            public void onItemClick(MyLending lending) {
                 //Toast.makeText(getContext(), contract.getId() + "", Toast.LENGTH_SHORT).show();
-                ((HomeActivity) Objects.requireNonNull(getActivity())).startContractDetail(contract);
+                ((HomeActivity) Objects.requireNonNull(getActivity())).startContractDetail(lending);
             }
         });
         LinearLayoutManager layoutSubjectManager = new LinearLayoutManager(getContext());
         layoutSubjectManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutSubjectManager);
         mRecyclerView.setAdapter(mContractAdapter);
-        createDefaultData();
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadLendingData();
     }
 
     @Override
@@ -69,14 +83,34 @@ public class SearchContractFragment extends BaseFragment {
         super.onResume();
     }
 
-    private void createDefaultData() {
-        String contractId = "ED01157881";
+    private void loadLendingData() {
+        if (mProgressDialog != null) {
+            mProgressDialog.show();
+        }
+        ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().getAllLending(new MyFirebase.GetAllLendingCallback() {
+            @Override
+            public void onGetLendingSuccess(List<MyLending> list) {
+                mProgressDialog.dismiss();
+                myLendingList.clear();
+                myLendingList.addAll(list);
+                mContractAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onGetLendingError(Exception e) {
+                mProgressDialog.dismiss();
+                Toast.makeText(getContext(), "Không thể load danh sách hợp đồng", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        /*String contractId = "ED01157881";
         String cus_name = "Trần Quang Thái";
         String created_at = "01/12/2019 17:12";
         String status = "Trạng thái: Đã duyệt";
         for (int i = 0; i < 10; i++) {
             myLendingList.add(new Contract(contractId + i, cus_name + i, created_at, status));
-        }
-        mContractAdapter.notifyDataSetChanged();
+        }*/
+
     }
 }

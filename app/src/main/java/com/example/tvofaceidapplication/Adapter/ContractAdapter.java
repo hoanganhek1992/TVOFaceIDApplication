@@ -10,16 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tvofaceidapplication.Model.Contract;
+import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.R;
 
 import java.util.List;
 
 public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.RecyclerViewHolder> {
 
-    private List<Contract> mList;
+    private List<MyLending> mList;
 
 
-    public ContractAdapter(List<Contract> mList) {
+    public ContractAdapter(List<MyLending> mList) {
         this.mList = mList;
     }
 
@@ -72,7 +73,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Recycl
     }
 
     public interface OnItemClickedListener {
-        void onItemClick(Contract contract);
+        void onItemClick(MyLending lending);
     }
 
     private ContractAdapter.OnItemClickedListener onItemClickedListener;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,127 +8,144 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="12dp"/>
+        android:layout_height="12dp" />
+
     <LinearLayout
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
         <TextView
-            android:textSize="32dp"
-            android:text="Cho vay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Cho vay"
+            android:textSize="32dp" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
-            android:textSize="18dp"
-            android:text="@string/name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/name"
+            android:textSize="18dp" />
+
         <EditText
             android:id="@+id/txtName"
-            android:background="@drawable/bg_edit_text"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_edit_text"
             android:inputType="text" />
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
-            android:textSize="18dp"
-            android:text="@string/address"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="18dp" />
+
         <EditText
             android:id="@+id/txtAddress"
-            android:background="@drawable/bg_edit_text"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_edit_text"
             android:inputType="text" />
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
-            android:textSize="18dp"
-            android:text="@string/phone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/text_cmnd_title"
+            android:textSize="18dp" />
 
         <EditText
             android:id="@+id/txtPhone"
-            android:background="@drawable/bg_edit_text"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_edit_text"
             android:inputType="phone" />
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
-            android:textSize="18dp"
-            android:text="@string/job"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/text_birth_date_title"
+            android:textSize="18dp" />
 
         <EditText
             android:id="@+id/txtJob"
-            android:background="@drawable/bg_edit_text"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_edit_text"
             android:inputType="text" />
     </LinearLayout>
+
     <LinearLayout
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
         <ImageView
             android:id="@+id/imgIDCardTop"
-            android:src="@drawable/cmnd"
             android:layout_width="80dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp"
+            android:src="@drawable/cmnd" />
+
         <View
             android:layout_width="20dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp" />
+
         <ImageView
             android:id="@+id/imgIDCardDown"
-            android:src="@drawable/cmnd"
             android:layout_width="80dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp"
+            android:src="@drawable/cmnd" />
+
         <View
             android:layout_width="20dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp" />
+
         <ImageView
             android:id="@+id/imgAvata"
-            android:src="@drawable/icon_add_employee"
             android:layout_width="80dp"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp"
+            android:src="@drawable/icon_add_employee" />
     </LinearLayout>
 
     <Button
-        android:textColor="@color/white"
-        android:background="@drawable/bg_buttom_mainscreen"
         android:id="@+id/btnSuccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_buttom_mainscreen"
         android:text="Đồng ý"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textColor="@color/white" />
 
 </LinearLayout>

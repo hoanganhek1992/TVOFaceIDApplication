@@ -7,8 +7,10 @@ import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.Model.MyLocation;
 import com.example.tvofaceidapplication.Model.MyTimeKeeping;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -95,13 +97,55 @@ public class MyFirebase {
     }
 
     public void addLending(MyLending lending, final LendingCallback callback) {
-        mDatabase.collection(TABLE_LENDING).document(System.currentTimeMillis() + "").set(lending).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mDatabase.collection(TABLE_LENDING).document(lending.getId()).set(lending).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onAddLendingSuccess();
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onAddLendingFail(e);
+            }
         });
     }
+
+    public void getAllLending(final GetAllLendingCallback callback) {
+        mDatabase.collection(TABLE_LENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<MyLending> myLendingList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        MyLending lending = document.toObject(MyLending.class);
+                        myLendingList.add(lending);
+                    }
+                    callback.onGetLendingSuccess(myLendingList);
+                } else {
+                    callback.onGetLendingError(task.getException());
+                }
+            }
+        });
+    }
+
+    /*public void updateLending(MyLending lending, LendingCallback callback) {
+        DocumentReference washingtonRef = mDatabase.collection(TABLE_LENDING).document(lending.getId());
+
+        washingtonRef
+                .update("capital", true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+    }*/
 
     public interface AddEmployeeCallback {
 
@@ -118,6 +162,14 @@ public class MyFirebase {
 
     public interface LendingCallback {
         void onAddLendingSuccess();
+
+        void onAddLendingFail(Exception err);
+    }
+
+    public interface GetAllLendingCallback {
+        void onGetLendingSuccess(List<MyLending> list);
+
+        void onGetLendingError(Exception e);
     }
 
     public interface LocationCallback {

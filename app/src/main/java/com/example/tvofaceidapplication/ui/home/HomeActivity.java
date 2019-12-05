@@ -16,7 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.tvofaceidapplication.Model.Contract;
+import com.example.tvofaceidapplication.Model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailActivity;
@@ -158,9 +158,9 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public void startContractDetail(Contract contract) {
+    public void startContractDetail(MyLending lending) {
         Intent intent = new Intent(HomeActivity.this, ContractDetailActivity.class);
-        intent.putExtra(BaseActivity.CONTRACT_OBJECT, contract);
+        intent.putExtra(BaseActivity.CONTRACT_OBJECT, lending);
         startActivity(intent);
     }
 

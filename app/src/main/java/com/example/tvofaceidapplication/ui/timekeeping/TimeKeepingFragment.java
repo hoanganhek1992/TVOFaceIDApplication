@@ -179,9 +179,15 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
                     setSuccessIcon(mName);
                     mId.setText(mTrueEmployee.getId());
                     setSuccessIcon(mId);
-                    byte[] decodedString = Base64.decode(mTrueEmployee.getImage(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    mImgResource.setImageBitmap(decodedByte);
+                    if (mTrueEmployee.getImage() != null) {
+                        try {
+                            byte[] decodedString = Base64.decode(mTrueEmployee.getImage(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            mImgResource.setImageBitmap(decodedByte);
+                        } catch (Exception ignore) {
+                        }
+
+                    }
                     ((HomeActivity) Objects.requireNonNull(getActivity())).getMyApplication().setmCurrentEmployee(mTrueEmployee);
 
                     getListLocation();
@@ -361,7 +367,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
                     if (!HomeActivity.isLogin) {
                         for (int i = 0; i < arrayList.size(); i++) {
                             if (arrayList.get(i).equals(mTrueLocation.getWifi_ssid())) {
-                                onShowProgress("", false);
+                                HomeActivity.isLogin = true;
                                 mWifi.setText(mTrueLocation.getWifi_ssid());
                                 setSuccessIcon(mWifi);
                                 showSuccessDialog();
@@ -390,23 +396,21 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void showSuccessDialog() {
-        if (!HomeActivity.isLogin) {
-            ((HomeActivity) Objects.requireNonNull(getActivity())).showSuccessDialog();
-            HomeActivity.isLogin = true;
-            //send data to server
-            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-            MyTimeKeeping myTimeKeeping = new MyTimeKeeping();
-            myTimeKeeping.setEmployee_id(mTrueEmployee.getId());
-            myTimeKeeping.setLocation_id(mTrueLocation.getId());
-            myTimeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
+        //send data to server
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        MyTimeKeeping myTimeKeeping = new MyTimeKeeping();
+        myTimeKeeping.setEmployee_id(mTrueEmployee.getId());
+        myTimeKeeping.setLocation_id(mTrueLocation.getId());
+        myTimeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
 
-            ((HomeActivity) getActivity()).getMyFirebase().addTimeKepping(myTimeKeeping, new MyFirebase.TimeKeepingCallback() {
-                @Override
-                public void onAddTimeKeepingSuccess() {
-                    Toast.makeText(getContext(), "Cập nhật dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().addTimeKepping(myTimeKeeping, new MyFirebase.TimeKeepingCallback() {
+            @Override
+            public void onAddTimeKeepingSuccess() {
+                onShowProgress("", false);
+                ((HomeActivity) Objects.requireNonNull(getActivity())).showSuccessDialog();
+
+            }
+        });
     }
 
     private void showErrorDialog() {

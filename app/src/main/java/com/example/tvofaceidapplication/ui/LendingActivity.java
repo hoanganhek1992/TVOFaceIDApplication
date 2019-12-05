@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +37,6 @@ import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 public class LendingActivity extends AppCompatActivity {
@@ -53,11 +53,11 @@ public class LendingActivity extends AppCompatActivity {
     private final int CAMERA_CMND_1 = 100;
     private final int CAMERA_CMND_2 = 101;
     private final int CAMERA_AVATAR = 102;
-    String name, adress, phone, job,textEr;
+    String name, adress, cmnd, birth_date, textEr;
     private final int ERROR_CODE_NAME = 1;
     private final int ERROR_CODE_ADDRESS = 2;
-    private final int ERROR_CODE_PHONE = 3;
-    private final int ERROR_CODE_JOB = 4;
+    private final int ERROR_CODE_CMND = 3;
+    private final int ERROR_CODE_BIRTH_DATE = 4;
     private final int ERROR_CODE_IMAGE = 5;
 
 
@@ -118,6 +118,7 @@ public class LendingActivity extends AppCompatActivity {
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(getString(actionStringId), listener).show();
     }
+
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     private void createDialogData() {
         progressDialog = new ProgressDialog(this);
@@ -162,18 +163,18 @@ public class LendingActivity extends AppCompatActivity {
         return true;
     }
 
-    public void validateText(int code){
-        switch (code){
+    public void validateText(int code) {
+        switch (code) {
             case ERROR_CODE_NAME:
                 textError.setText(R.string.error_name);
                 break;
             case ERROR_CODE_ADDRESS:
                 textError.setText(R.string.error_address);
-            case ERROR_CODE_PHONE:
-                textError.setText(R.string.error_phone);
+            case ERROR_CODE_CMND:
+                textError.setText(R.string.error_cmnd);
                 break;
-            case ERROR_CODE_JOB:
-                textError.setText(R.string.error_job);
+            case ERROR_CODE_BIRTH_DATE:
+                textError.setText(R.string.error_birth_date);
                 break;
             case ERROR_CODE_IMAGE:
                 textError.setText(R.string.error_image);
@@ -186,8 +187,8 @@ public class LendingActivity extends AppCompatActivity {
     public boolean validate() {
         name = textName.getText().toString().trim();
         adress = textAdress.getText().toString().trim();
-        phone = textPhone.getText().toString().trim();
-        job = textJob.getText().toString().trim();
+        cmnd = textPhone.getText().toString().trim();
+        birth_date = textJob.getText().toString().trim();
 
         if (name.length() < 3) {
             validateText(ERROR_CODE_NAME);
@@ -195,11 +196,11 @@ public class LendingActivity extends AppCompatActivity {
         } else if (adress.length() < 3) {
             validateText(ERROR_CODE_ADDRESS);
             return false;
-        } else if (!validatePhone(phone)) {
-            validateText(ERROR_CODE_PHONE);
+        } else if (!validatePhone(cmnd)) {
+            validateText(ERROR_CODE_CMND);
             return false;
-        } else if (job.length() < 3) {
-            validateText(ERROR_CODE_JOB);
+        } else if (birth_date.length() < 3) {
+            validateText(ERROR_CODE_BIRTH_DATE);
             return false;
         } else if (BitMapToString(imgAv).length() < 1) {
             validateText(ERROR_CODE_IMAGE);
@@ -233,17 +234,33 @@ public class LendingActivity extends AppCompatActivity {
         progressDialog.show();
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String date = df.format(Calendar.getInstance().getTime());
-        if (!validate()){
+        if (!validate()) {
             progressDialog.dismiss();
             showAlertDialogError();
-            }
-        else {
-            lending = new MyLending(name, adress, phone, job, BitMapToString(imgAv), BitMapToString(imgTop), BitMapToString(imgDown), date);
+        } else {
+
+
+            lending = new MyLending("ED" + System.currentTimeMillis(),
+                    name,
+                    adress,
+                    birth_date,
+                    cmnd,
+                    BitMapToString(imgAv),
+                    BitMapToString(imgTop),
+                    BitMapToString(imgDown),
+                    df.format(Calendar.getInstance().getTime()),
+                    "Thành công"
+            );
             myFirebase.addLending(lending, new MyFirebase.LendingCallback() {
                 @Override
                 public void onAddLendingSuccess() {
                     progressDialog.dismiss();
                     showAlertDialogSuccess();
+                }
+
+                @Override
+                public void onAddLendingFail(Exception err) {
+                    Toast.makeText(getApplicationContext(), "onAddLendingFail", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -252,8 +269,7 @@ public class LendingActivity extends AppCompatActivity {
     private void processImage(int permission_number) {
         if (hasCameraPermission()) {
             pickImage(permission_number);
-        }
-        else{
+        } else {
             requestCameraPermission(permission_number);
         }
     }
@@ -285,14 +301,13 @@ public class LendingActivity extends AppCompatActivity {
     }
 
     public String BitMapToString(Bitmap bitmap) {
-        if(bitmap != null)
-        {
+        if (bitmap != null) {
             ByteArrayOutputStream ByteStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
             byte[] b = ByteStream.toByteArray();
             return Base64.encodeToString(b, Base64.DEFAULT);
         }
-       return null;
+        return null;
     }
 
     private void pickImage(int permission_number) {
@@ -303,7 +318,7 @@ public class LendingActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.M)
     private void requestCameraPermission(final int permission_id) {
         boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
-        if(shouldProvideRationale) {
+        if (shouldProvideRationale) {
             showSnackbar(R.string.permission_rationale,
                     android.R.string.ok, new View.OnClickListener() {
                         @Override
@@ -312,8 +327,7 @@ public class LendingActivity extends AppCompatActivity {
                         }
                     });
             //requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
-        }
-        else{
+        } else {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, permission_id);
         }
 
@@ -325,7 +339,7 @@ public class LendingActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(hasCameraPermission()) {
+        if (hasCameraPermission()) {
             switch (requestCode) {
                 case CAMERA_CMND_1:
                     processImage(CAMERA_CMND_1);
@@ -339,8 +353,7 @@ public class LendingActivity extends AppCompatActivity {
                 default:
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
-        }
-        else{
+        } else {
             showSnackbar(R.string.permission_rationale,
                     android.R.string.ok, new View.OnClickListener() {
                         @Override

@@ -40,7 +40,7 @@
             android:text="@string/text_birth_date_title" />
 
         <TextView
-            android:id="@+id/detail_contract_birth_date"
+            android:id="@+id/detail_contract_customer_birth_date"
             style="@style/CustomTextview_Contract_2"
             android:layout_toEndOf="@id/detail_contract_birth_date_title"
             android:text="@string/text_birth_date_example"
@@ -60,7 +60,7 @@
             android:text="@string/text_phone_title" />
 
         <TextView
-            android:id="@+id/detail_contract_phone"
+            android:id="@+id/detail_contract_customer_phone"
             style="@style/CustomTextview_Contract_2"
             android:layout_toEndOf="@id/detail_contract_phone_title"
             android:text="@string/text_phone_example"
@@ -79,7 +79,7 @@
             android:text="@string/text_cmnd_title" />
 
         <TextView
-            android:id="@+id/detail_contract_cmnd"
+            android:id="@+id/detail_contract_customer_cmnd"
             style="@style/CustomTextview_Contract_2"
             android:layout_toEndOf="@id/detail_contract_cmnd_title"
             android:text="@string/text_cmnd_example"
