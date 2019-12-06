@@ -402,6 +402,8 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
                         for (int i = 0; i < arrayList.size(); i++) {
                             if (arrayList.get(i).equals(mTrueLocation.getWifi_ssid())) {
                                 HomeActivity.isLogin = true;
+                                HomeActivity.isAroundLocation = true;
+                                HomeActivity.isShowNotifyAroundLocation = true;
                                 mWifi.setText(mTrueLocation.getWifi_ssid());
                                 setSuccessIcon(mWifi);
                                 showSuccessDialog();

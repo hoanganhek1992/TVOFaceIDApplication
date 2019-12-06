@@ -15,8 +15,8 @@ public class WifiReceiver extends BroadcastReceiver {
     WifiManager wifiManager;
     WifiCalback mCallback;
 
-    public static WifiReceiver getInstance(WifiManager wifiManager, WifiCalback calback){
-        if(mWifiReceive == null){
+    public static WifiReceiver getInstance(WifiManager wifiManager, WifiCalback calback) {
+        if (mWifiReceive == null) {
             mWifiReceive = new WifiReceiver(wifiManager, calback);
         }
         return mWifiReceive;
@@ -39,7 +39,7 @@ public class WifiReceiver extends BroadcastReceiver {
                 mCallback.onGetListWifiSuccess(deviceList);
             else
                 mCallback.onGetListWifiError("List wifi = 0");
-        }else {
+        } else {
             mCallback.onGetListWifiError("Get list wifi error");
         }
     }

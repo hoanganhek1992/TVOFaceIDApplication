@@ -162,4 +162,9 @@ public class BaseActivity extends AppCompatActivity {
         Log.e("TAG", "isLogin" + sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime())) + "");
         return sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime()));
     }
+
+    public String getWifiSsid() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getString(BaseActivity.SAVE_WIFI_SSID_LOGIN, "");
+    }
 }

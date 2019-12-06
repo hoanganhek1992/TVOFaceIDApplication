@@ -95,4 +95,7 @@
 
     <string name="text_close_title">Đóng</string>
     <string name="text_try_again_title">Thử lại</string>
+    <string name="text_notify_title">Thông báo</string>
+    <string name="text_notification_outside_checkin">Bạn đã ra khỏi khu vực chấm công</string>
+    <string name="text_notification_inside_checkin">Bạn đã vào khu vực chấm công</string>
 </resources>

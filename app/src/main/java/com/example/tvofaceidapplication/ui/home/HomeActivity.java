@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +24,6 @@ import androidx.fragment.app.FragmentManager;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
-import com.example.tvofaceidapplication.inteface.WifiStartCallback;
 import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailActivity;
 import com.example.tvofaceidapplication.ui.lending.LendingFragment;
@@ -33,20 +34,24 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends BaseActivity implements WifiStartCallback {
+public class HomeActivity extends BaseActivity {
 
     BottomNavigationView bottomNavigationView;
     public static boolean isLogin = false;
+    public static boolean isAroundLocation = true;
+    public static boolean isShowNotifyAroundLocation = true;
     FragmentManager mFragmentManager;
     Fragment mCurrentFragment;
     ActionBar mActionBar;
     ProgressDialog mProgress;
 
-    AlertDialog mSuccessDialog, mErrorDialog;
+    AlertDialog mSuccessDialog, mErrorDialog, mWarningDialog;
+    TextView mMessageWarningDialog;
 
     //Variable to get and check Wifi SSID
     private WifiManager wifiManager;
     private WifiReceiver receiverWifi;
+    private final int TIME_SCAN_WIFI = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,10 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Log.e("TAG", "setOnNavigationItemSelectedListener");
-
+                if (isLogin()) {
+                    mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                    mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                }
                 switch (menuItem.getItemId()) {
                     case R.id.item_time_keeping:
                         if (!isLogin) {
@@ -83,28 +91,6 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
                         break;
 
                 }
-                /*if (!isLogin && menuItem.getItemId() == R.id.item_search_contract) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.please_login), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-                if (isLogin) {
-                    if (menuItem.getItemId() == R.id.item_time_keeping) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_time_keeping_success_before), Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    switch (menuItem.getItemId()) {
-                        case R.id.item_time_keeping:
-                            changeFragment(TimeKeepingFragment.newInstance());
-                            break;
-                        case R.id.item_new_lending:
-                            changeFragment(LendingFragment.newInstance());
-                            break;
-                        case R.id.item_search_contract:
-                            changeFragment(SearchContractFragment.newInstance());
-                            break;
-                    }
-                }*/
                 return true;
             }
         });
@@ -112,12 +98,22 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
         setTitle("mặc định");
 
         createDialogData();
+
+        /*if (HomeActivity.isLogin) {
+            mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+        }*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         isLogin = isLogin();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mScanWifiHandler.removeCallbacks(mScanWifiRunable);
     }
 
     public void setDefaultRuleBottomNavigation() {
@@ -163,6 +159,18 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
             }
         });
         mSuccessDialog = builder.create();
+
+        View viewWarning = LayoutInflater.from(this).inflate(R.layout.notification_warning, viewGroup, false);
+        builder.setView(viewWarning);
+        viewWarning.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWarningDialog.dismiss();
+            }
+        });
+        mMessageWarningDialog = viewWarning.findViewById(R.id.warning_message);
+        mWarningDialog = builder.create();
+
     }
 
     public void startNewActivity(int activity_id) {
@@ -217,7 +225,23 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
         }
     }
 
+    public void showWarningDialog(String message) {
+        if (mWarningDialog != null && mMessageWarningDialog != null) {
+            mMessageWarningDialog.setText(message);
+            mWarningDialog.show();
+        }
+    }
+
+    public void hideWarningDialog() {
+        if (mWarningDialog != null && mMessageWarningDialog != null) {
+            mWarningDialog.dismiss();
+        }
+    }
+
     public void checkWifiSSID(WifiReceiver.WifiCalback calback) {
+        if (receiverWifi != null) {
+            unregisterReceiver(receiverWifi);
+        }
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         assert wifiManager != null;
         if (!wifiManager.isWifiEnabled()) {
@@ -231,13 +255,54 @@ public class HomeActivity extends BaseActivity implements WifiStartCallback {
         wifiManager.startScan();
     }
 
-    @Override
-    public void onWifiStartSucces(ArrayList<String> arrayList) {
+    private Runnable mScanWifiRunable = new Runnable() {
+        @Override
+        public void run() {
+            checkWifiSSID(new WifiReceiver.WifiCalback() {
+                @Override
+                public void onGetListWifiSuccess(ArrayList<String> arrayList) {
+                    Log.e("mScanWifiRunable", "onGetListWifiSuccess");
+                    if (isLogin() && !getWifiSsid().equals("")) {
+                        for (int i = 0; i < arrayList.size(); i++) {
+                            if (arrayList.get(i).equals(getWifiSsid())) {
+                                if (HomeActivity.isAroundLocation) {
+                                    Log.e("TAG", "Around = true");
+                                } else {
+                                    HomeActivity.isAroundLocation = true;
+                                    Log.e("TAG", "Around = false --> true");
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_inside_checkin), Toast.LENGTH_LONG).show();
+                                    showWarningDialog(getResources().getString(R.string.text_notification_inside_checkin));
+                                }
+                                mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                                mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                                return;
+                            }
+                        }
+                        if (HomeActivity.isAroundLocation) {
+                            HomeActivity.isAroundLocation = false;
+                            Log.e("TAG", "Around = true --> false");
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_outside_checkin), Toast.LENGTH_LONG).show();
+                            showWarningDialog(getResources().getString(R.string.text_notification_outside_checkin));
+                        } else {
+                            Log.e("TAG", "Around = false");
+                        }
+                    }
 
-    }
 
-    @Override
-    public void onWifiStartError() {
+                    mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                    mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                }
 
-    }
+                @Override
+                public void onGetListWifiError(String err) {
+                    Log.e("mScanWifiRunable", "onGetListWifiError");
+                    mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                    mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                }
+            });
+
+
+        }
+    };
+    private Handler mScanWifiHandler = new Handler();
 }
