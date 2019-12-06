@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -111,6 +112,26 @@ public class MyFirebase {
 
     public void getAllLending(final GetAllLendingCallback callback) {
         mDatabase.collection(TABLE_LENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<MyLending> myLendingList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        MyLending lending = document.toObject(MyLending.class);
+                        myLendingList.add(lending);
+                    }
+                    callback.onGetLendingSuccess(myLendingList);
+                } else {
+                    callback.onGetLendingError(task.getException());
+                }
+            }
+        });
+    }
+
+    public void searchLending(String data, final GetAllLendingCallback callback) {
+        mDatabase.collection(TABLE_LENDING)
+                .whereGreaterThan("id", "132")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

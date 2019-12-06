@@ -48,8 +48,6 @@ public class HomeActivity extends BaseActivity {
     AlertDialog mSuccessDialog, mErrorDialog, mWarningDialog;
     TextView mMessageWarningDialog;
 
-    //Variable to get and check Wifi SSID
-    private WifiManager wifiManager;
     private WifiReceiver receiverWifi;
     private final int TIME_SCAN_WIFI = 5000;
 
@@ -232,17 +230,12 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public void hideWarningDialog() {
-        if (mWarningDialog != null && mMessageWarningDialog != null) {
-            mWarningDialog.dismiss();
-        }
-    }
-
     public void checkWifiSSID(WifiReceiver.WifiCalback calback) {
         if (receiverWifi != null) {
             unregisterReceiver(receiverWifi);
         }
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        //Variable to get and check Wifi SSID
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         assert wifiManager != null;
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
@@ -261,36 +254,40 @@ public class HomeActivity extends BaseActivity {
             checkWifiSSID(new WifiReceiver.WifiCalback() {
                 @Override
                 public void onGetListWifiSuccess(ArrayList<String> arrayList) {
-                    Log.e("mScanWifiRunable", "onGetListWifiSuccess");
-                    if (isLogin() && !getWifiSsid().equals("")) {
-                        for (int i = 0; i < arrayList.size(); i++) {
-                            if (arrayList.get(i).equals(getWifiSsid())) {
-                                if (HomeActivity.isAroundLocation) {
-                                    Log.e("TAG", "Around = true");
-                                } else {
-                                    HomeActivity.isAroundLocation = true;
-                                    Log.e("TAG", "Around = false --> true");
-                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_inside_checkin), Toast.LENGTH_LONG).show();
-                                    showWarningDialog(getResources().getString(R.string.text_notification_inside_checkin));
+                    try {
+                        Log.e("mScanWifiRunable", "onGetListWifiSuccess");
+                        if (isLogin() && !getWifiSsid().equals("")) {
+                            for (int i = 0; i < arrayList.size(); i++) {
+                                if (arrayList.get(i).equals(getWifiSsid())) {
+                                    if (HomeActivity.isAroundLocation) {
+                                        Log.e("TAG", "Around = true");
+                                    } else {
+                                        HomeActivity.isAroundLocation = true;
+                                        Log.e("TAG", "Around = false --> true");
+                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_inside_checkin), Toast.LENGTH_LONG).show();
+                                        showWarningDialog(getResources().getString(R.string.text_notification_inside_checkin));
+                                    }
+                                    mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                                    mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                                    return;
                                 }
-                                mScanWifiHandler.removeCallbacks(mScanWifiRunable);
-                                mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
-                                return;
+                            }
+                            if (HomeActivity.isAroundLocation) {
+                                HomeActivity.isAroundLocation = false;
+                                Log.e("TAG", "Around = true --> false");
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_outside_checkin), Toast.LENGTH_LONG).show();
+                                showWarningDialog(getResources().getString(R.string.text_notification_outside_checkin));
+                            } else {
+                                Log.e("TAG", "Around = false");
                             }
                         }
-                        if (HomeActivity.isAroundLocation) {
-                            HomeActivity.isAroundLocation = false;
-                            Log.e("TAG", "Around = true --> false");
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_outside_checkin), Toast.LENGTH_LONG).show();
-                            showWarningDialog(getResources().getString(R.string.text_notification_outside_checkin));
-                        } else {
-                            Log.e("TAG", "Around = false");
-                        }
+
+
+                        mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+                        mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
+                    } catch (Exception ignore) {
+
                     }
-
-
-                    mScanWifiHandler.removeCallbacks(mScanWifiRunable);
-                    mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
                 }
 
                 @Override

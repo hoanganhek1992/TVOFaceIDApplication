@@ -8,7 +8,6 @@ import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Base64;
@@ -82,10 +81,6 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     private boolean mRequestingLocationUpdates = false;
     private int mCount = 0;
     private final int mMaxRepeat = 10;
-
-    //Variable to get and check Wifi SSID
-    private WifiManager wifiManager;
-    private WifiReceiver receiverWifi;
 
 
     public static TimeKeepingFragment newInstance() {

@@ -7,7 +7,7 @@ import java.io.Serializable;
 @IgnoreExtraProperties
 public class MyLending implements Serializable {
 
-    private String id, name, address, birth_date, cmnd, image, cmnd_1, cmnd_2, created_at, status, store = "ED HT ĐIỆN MÁY XANH 224", phone ="09336254243";
+    private String id, name, address, birth_date, cmnd, image, cmnd_1, cmnd_2, created_at, status, store = "ED HT ĐIỆN MÁY XANH 224", phone = "09336254243";
 
     public MyLending() {
     }
@@ -119,5 +119,22 @@ public class MyLending implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCreatedAt_parse() {
+
+        if (this.created_at == null || this.created_at.equals("")) {
+            return "";
+        } else {
+            try {
+                return this.created_at.substring(6, 8) + "/"
+                        + this.created_at.substring(4, 6) + "/"
+                        + this.created_at.substring(0, 4) + " "
+                        + this.created_at.substring(8, 10) + ":"
+                        + this.created_at.substring(10, 12);
+            } catch (Exception e) {
+                return created_at;
+            }
+        }
     }
 }

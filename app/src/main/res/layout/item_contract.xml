@@ -3,6 +3,7 @@
     android:id="@+id/item_contract_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/default_margin_medium"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical"
     android:padding="@dimen/default_padding_small">
@@ -26,6 +27,7 @@
             android:singleLine="true"
             android:text="@string/text_created_time_example"
             android:textColor="@color/grayDark"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
@@ -41,7 +43,8 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="@string/text_name_example"
-            android:textColor="@color/gray" />
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/item_contract_status"
@@ -51,6 +54,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="@string/text_status_example"
-            android:textColor="@color/gray" />
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
     </RelativeLayout>
 </LinearLayout>

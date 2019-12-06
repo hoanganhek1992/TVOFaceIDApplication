@@ -35,7 +35,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Recycl
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
         holder.mContractName.setText(mList.get(position).getName());
         holder.mContractId.setText(mList.get(position).getId());
-        holder.mContractTime.setText(mList.get(position).getCreated_at());
+        holder.mContractTime.setText(mList.get(position).getCreatedAt_parse());
         holder.mCOntractStatus.setText(mList.get(position).getStatus());
         holder.llContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,4 +80,5 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.Recycl
     public void setOnItemClickedListener(OnItemClickedListener onItemClickedListener) {
         this.onItemClickedListener = onItemClickedListener;
     }
+
 }
