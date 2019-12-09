@@ -21,6 +21,7 @@ public class SplashScreen extends AppCompatActivity {
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Loading user data...");
+        mProgressDialog.setCancelable(false);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -98,4 +98,5 @@
     <string name="text_notify_title">Thông báo</string>
     <string name="text_notification_outside_checkin">Bạn đã ra khỏi khu vực chấm công</string>
     <string name="text_notification_inside_checkin">Bạn đã vào khu vực chấm công</string>
+    <string name="text_send_title">Send</string>
 </resources>

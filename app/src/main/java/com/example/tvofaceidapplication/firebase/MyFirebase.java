@@ -1,5 +1,7 @@
 package com.example.tvofaceidapplication.firebase;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.tvofaceidapplication.model.MyEmployee;
@@ -10,12 +12,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +31,8 @@ public class MyFirebase {
     private static final String TABLE_LENDING = "lending";
     private static final String TABLE_LOCATION = "location";
     private static final String TABLE_TIME_KEEPING = "time_keeping";
+
+    private static final String LENDING_SORT_BY = "updated_at";
 
     private FirebaseFirestore mDatabase;
 
@@ -111,21 +119,23 @@ public class MyFirebase {
     }
 
     public void getAllLending(final GetAllLendingCallback callback) {
-        mDatabase.collection(TABLE_LENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<MyLending> myLendingList = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        MyLending lending = document.toObject(MyLending.class);
-                        myLendingList.add(lending);
+        mDatabase.collection(TABLE_LENDING).orderBy(LENDING_SORT_BY, Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<MyLending> myLendingList = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                MyLending lending = document.toObject(MyLending.class);
+                                myLendingList.add(lending);
+                            }
+                            callback.onGetLendingSuccess(myLendingList);
+                        } else {
+                            callback.onGetLendingError(task.getException());
+                        }
                     }
-                    callback.onGetLendingSuccess(myLendingList);
-                } else {
-                    callback.onGetLendingError(task.getException());
-                }
-            }
-        });
+                });
     }
 
     public void searchLending(String data, final GetAllLendingCallback callback) {
@@ -146,6 +156,55 @@ public class MyFirebase {
                 }
             }
         });
+    }
+
+    public void listenLendingWithId(String lending_id, final ListenLendingCallback callback) {
+        mDatabase.collection(TABLE_LENDING).document(lending_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("listenLendingWithId", "Listen failed.", e);
+                    return;
+                }
+
+                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                        ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d("listenLendingWithId", source + " data: " + snapshot.getData());
+                    callback.onLendingChange(snapshot.toObject(MyLending.class));
+
+                } else {
+                    Log.d("listenLendingWithId", source + " data: null");
+                }
+            }
+        });
+    }
+
+    public void listenAllLending(final ListenAllLendingCallback callback) {
+        mDatabase.collection(TABLE_LENDING)
+                .orderBy(LENDING_SORT_BY, Query.Direction.DESCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("listenAllLending", "Listen failed.", e);
+                            return;
+                        }
+
+                        List<MyLending> list = new ArrayList<>();
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            if (doc != null) {
+                                list.add(doc.toObject(MyLending.class));
+                            }
+                        }
+                        Log.d("listenAllLending", "Current cites in CA: " + list);
+
+                        callback.onLendingChange(list);
+                    }
+                });
     }
 
     /*public void updateLending(MyLending lending, LendingCallback callback) {
@@ -192,6 +251,14 @@ public class MyFirebase {
         void onGetLendingError(Exception e);
     }
 
+    public interface ListenLendingCallback {
+        void onLendingChange(MyLending myLending);
+    }
+
+    public interface ListenAllLendingCallback {
+        void onLendingChange(List<MyLending> list);
+    }
+
     public interface LocationCallback {
         void onGetLocationSuccess(List<MyLocation> list);
 
@@ -201,5 +268,6 @@ public class MyFirebase {
     public interface TimeKeepingCallback {
         void onAddTimeKeepingSuccess();
     }
+
 
 }

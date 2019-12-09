@@ -101,6 +101,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
                             str_cmnd1,
                             str_cmnd2,
                             df.format(Calendar.getInstance().getTime()),
+                            df.format(Calendar.getInstance().getTime()),
                             "Thành công"
                     );
                     addLendingToDb(myLending);

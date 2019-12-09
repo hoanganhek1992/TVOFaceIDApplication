@@ -213,6 +213,7 @@ public class WifiCheckActivity extends AppCompatActivity {
         keeping.setEmployee_id(id_employee);
         keeping.setCreated_at(date);
         keeping.setLocation_id(id_location);
+        keeping.setStatus("in");
         myFirebase.addTimeKepping(keeping, new MyFirebase.TimeKeepingCallback() {
             @Override
             public void onAddTimeKeepingSuccess() {

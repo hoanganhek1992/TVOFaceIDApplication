@@ -1,5 +1,6 @@
 package com.example.tvofaceidapplication.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,7 +25,9 @@ import androidx.fragment.app.FragmentManager;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
+import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.model.MyLending;
+import com.example.tvofaceidapplication.model.MyTimeKeeping;
 import com.example.tvofaceidapplication.ui.contract_detail.ContractDetailActivity;
 import com.example.tvofaceidapplication.ui.lending.LendingFragment;
 import com.example.tvofaceidapplication.ui.new_lending.addnew.NewLendingActivity;
@@ -32,7 +35,10 @@ import com.example.tvofaceidapplication.ui.searchcontract.SearchContractFragment
 import com.example.tvofaceidapplication.ui.timekeeping.TimeKeepingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class HomeActivity extends BaseActivity {
 
@@ -40,6 +46,7 @@ public class HomeActivity extends BaseActivity {
     public static boolean isLogin = false;
     public static boolean isAroundLocation = true;
     public static boolean isShowNotifyAroundLocation = true;
+    public static boolean isChecking = false;
     FragmentManager mFragmentManager;
     Fragment mCurrentFragment;
     ActionBar mActionBar;
@@ -69,12 +76,14 @@ public class HomeActivity extends BaseActivity {
                 }
                 switch (menuItem.getItemId()) {
                     case R.id.item_time_keeping:
-                        if (!isLogin) {
+
+                        /*if (!isLogin) {
                             changeFragment(TimeKeepingFragment.newInstance());
                         } else {
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_time_keeping_success_before), Toast.LENGTH_SHORT).show();
                             return false;
-                        }
+                        }*/
+                        changeFragment(TimeKeepingFragment.newInstance());
                         break;
                     case R.id.item_search_contract:
                         if (isLogin) {
@@ -248,6 +257,15 @@ public class HomeActivity extends BaseActivity {
         wifiManager.startScan();
     }
 
+    public void onUnListenWifiReceive() {
+        mScanWifiHandler.removeCallbacks(mScanWifiRunable);
+        if (receiverWifi != null) {
+            unregisterReceiver(receiverWifi);
+        }
+
+        receiverWifi = null;
+    }
+
     private Runnable mScanWifiRunable = new Runnable() {
         @Override
         public void run() {
@@ -264,6 +282,7 @@ public class HomeActivity extends BaseActivity {
                                     } else {
                                         HomeActivity.isAroundLocation = true;
                                         Log.e("TAG", "Around = false --> true");
+                                        mSendTimeKeepingHander.post(mCustomRunnable("in"));
                                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_inside_checkin), Toast.LENGTH_LONG).show();
                                         showWarningDialog(getResources().getString(R.string.text_notification_inside_checkin));
                                     }
@@ -275,13 +294,13 @@ public class HomeActivity extends BaseActivity {
                             if (HomeActivity.isAroundLocation) {
                                 HomeActivity.isAroundLocation = false;
                                 Log.e("TAG", "Around = true --> false");
+                                mSendTimeKeepingHander.post(mCustomRunnable("out"));
                                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_notification_outside_checkin), Toast.LENGTH_LONG).show();
                                 showWarningDialog(getResources().getString(R.string.text_notification_outside_checkin));
                             } else {
                                 Log.e("TAG", "Around = false");
                             }
                         }
-
 
                         mScanWifiHandler.removeCallbacks(mScanWifiRunable);
                         mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
@@ -297,9 +316,32 @@ public class HomeActivity extends BaseActivity {
                     mScanWifiHandler.postDelayed(mScanWifiRunable, TIME_SCAN_WIFI);
                 }
             });
-
-
         }
     };
+
+    private Runnable mCustomRunnable(final String status) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+                MyTimeKeeping timeKeeping = new MyTimeKeeping();
+                timeKeeping.setStatus(status);
+                timeKeeping.setEmployee_id(loadLoginUser().getId());
+                timeKeeping.setLocation_id(loadLoginLocation().getId());
+                timeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
+                getMyFirebase().addTimeKepping(timeKeeping, new MyFirebase.TimeKeepingCallback() {
+                    @Override
+                    public void onAddTimeKeepingSuccess() {
+                        //Success
+                    }
+                });
+            }
+        };
+    }
+
     private Handler mScanWifiHandler = new Handler();
+
+    private Handler mSendTimeKeepingHander = new Handler();
+
+
 }

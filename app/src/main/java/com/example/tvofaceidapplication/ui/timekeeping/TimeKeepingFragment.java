@@ -27,7 +27,6 @@ import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseFragment;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
-import com.example.tvofaceidapplication.inteface.WifiStartCallback;
 import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.model.MyLocation;
 import com.example.tvofaceidapplication.model.MyTimeKeeping;
@@ -58,7 +57,7 @@ import java.util.Objects;
 
 import static java.lang.Double.parseDouble;
 
-public class TimeKeepingFragment extends BaseFragment implements View.OnClickListener, WifiStartCallback {
+public class TimeKeepingFragment extends BaseFragment implements View.OnClickListener {
 
     private final String TAG = "TimeKeepingFragment";
 
@@ -110,7 +109,34 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         getBaseToolbar().onSetTitle("Chấm công");
 
         view.findViewById(R.id.time_keeping_openCamera).setOnClickListener(this);
+
+        try {
+            if (((HomeActivity) Objects.requireNonNull(getActivity())).isLogin()) {
+                loadUserLoginData();
+            }
+        } catch (Exception ignore) {
+        }
         return view;
+    }
+
+    private void loadUserLoginData() {
+        mTrueEmployee = ((HomeActivity) Objects.requireNonNull(getActivity())).loadLoginUser();
+        if (mTrueEmployee != null) {
+            mName.setText(mTrueEmployee.getName());
+            setSuccessIcon(mName);
+            mId.setText(mTrueEmployee.getId());
+            setSuccessIcon(mId);
+            byte[] decodedString = Base64.decode(mTrueEmployee.getImage(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            mImgResource.setImageBitmap(decodedByte);
+        }
+        mTrueLocation = ((HomeActivity) Objects.requireNonNull(getActivity())).loadLoginLocation();
+        if (mTrueLocation != null) {
+            mLocation.setText(mTrueLocation.getName());
+            setSuccessIcon(mLocation);
+            mWifi.setText(mTrueLocation.getWifi_ssid());
+            setSuccessIcon(mWifi);
+        }
     }
 
     @Override
@@ -160,6 +186,11 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void startChecking() {
+        HomeActivity.isChecking = true;
+        HomeActivity.isLogin = false;
+
+        ((HomeActivity) Objects.requireNonNull(getActivity())).onUnListenWifiReceive();
+        ((HomeActivity) Objects.requireNonNull(getActivity())).clearLogin();
         onShowProgress(getResources().getString(R.string.dialog_checking_user_inf), true);
 
         ((HomeActivity) Objects.requireNonNull(getActivity())).
@@ -168,7 +199,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
             public void onGetEmployeeSuccess(List<MyEmployee> list) {
                 onShowProgress("", false);
                 if (list != null && list.size() > 0) {
-                    mTrueEmployee = list.get(0);
+                    mTrueEmployee = list.get(1);
                     mName.setText(mTrueEmployee.getName());
                     setSuccessIcon(mName);
                     mId.setText(mTrueEmployee.getId());
@@ -254,7 +285,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 try {
-                    if (!HomeActivity.isLogin) {
+                    if (HomeActivity.isChecking) {
                         Location mCurrentLocation = locationResult.getLastLocation();
                         if (mCurrentLocation != null) {
                             for (int i = 0; i < myLocationList.size(); i++) {
@@ -349,54 +380,16 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
 
 
     private void checkWifiSSID() {
-        /*wifiManager = (WifiManager) Objects.requireNonNull(getContext()).getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        assert wifiManager != null;
-        if (!wifiManager.isWifiEnabled()) {
-            wifiManager.setWifiEnabled(true);
-        }
-
-        receiverWifi = WifiReceiver.getInstance(wifiManager);
-        receiverWifi.setmCallback(new WifiReceiver.WifiCalback() {
-            @Override
-            public void onGetListWifiSuccess(ArrayList<String> arrayList) {
-                try {
-                    if (!HomeActivity.isLogin) {
-                        for (int i = 0; i < arrayList.size(); i++) {
-                            if (arrayList.get(i).equals(mTrueLocation.getWifi_ssid())) {
-                                HomeActivity.isLogin = true;
-                                mWifi.setText(mTrueLocation.getWifi_ssid());
-                                setSuccessIcon(mWifi);
-                                showSuccessDialog();
-                                return;
-                            }
-                        }
-                        onShowProgress("", false);
-                        setFailIcon(mWifi);
-                        showErrorDialog();
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-
-            @Override
-            public void onGetListWifiError(String err) {
-                onShowProgress("", false);
-                Toast.makeText(getContext(), "Không thể lấy dữ liệu từ máy chủ", Toast.LENGTH_LONG).show();
-            }
-        });
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        Objects.requireNonNull(getActivity()).registerReceiver(receiverWifi, intentFilter);
-        wifiManager.startScan();*/
         onShowProgress(getResources().getString(R.string.dialog_checking_wifi_ssid), true);
         ((HomeActivity) Objects.requireNonNull(getActivity())).checkWifiSSID(new WifiReceiver.WifiCalback() {
             @Override
             public void onGetListWifiSuccess(ArrayList<String> arrayList) {
                 try {
-                    if (!HomeActivity.isLogin) {
+                    if (HomeActivity.isChecking) {
                         for (int i = 0; i < arrayList.size(); i++) {
                             if (arrayList.get(i).equals(mTrueLocation.getWifi_ssid())) {
                                 HomeActivity.isLogin = true;
+                                HomeActivity.isChecking = false;
                                 HomeActivity.isAroundLocation = true;
                                 HomeActivity.isShowNotifyAroundLocation = true;
                                 mWifi.setText(mTrueLocation.getWifi_ssid());
@@ -425,11 +418,12 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     private void showSuccessDialog() {
         //send data to server
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        ((HomeActivity) Objects.requireNonNull(getActivity())).saveLoginSession(mTrueLocation.getWifi_ssid());
+        ((HomeActivity) Objects.requireNonNull(getActivity())).saveLoginSession(mTrueLocation, mTrueEmployee);
         MyTimeKeeping myTimeKeeping = new MyTimeKeeping();
         myTimeKeeping.setEmployee_id(mTrueEmployee.getId());
         myTimeKeeping.setLocation_id(mTrueLocation.getId());
         myTimeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
+        myTimeKeeping.setStatus("in");
 
         ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().addTimeKepping(myTimeKeeping, new MyFirebase.TimeKeepingCallback() {
             @Override
@@ -442,33 +436,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void showErrorDialog() {
+        HomeActivity.isChecking = false;
         ((HomeActivity) Objects.requireNonNull(getActivity())).showErrorDialog();
-    }
-
-    @Override
-    public void onWifiStartSucces(ArrayList<String> arrayList) {
-        /*try {
-            if (!HomeActivity.isLogin) {
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (arrayList.get(i).equals(mTrueLocation.getWifi_ssid())) {
-                        HomeActivity.isLogin = true;
-                        mWifi.setText(mTrueLocation.getWifi_ssid());
-                        setSuccessIcon(mWifi);
-                        showSuccessDialog();
-                        return;
-                    }
-                }
-                onShowProgress("", false);
-                setFailIcon(mWifi);
-                showErrorDialog();
-            }
-        } catch (Exception ignore) {
-        }*/
-    }
-
-    @Override
-    public void onWifiStartError() {
-        onShowProgress("", false);
-        Toast.makeText(getContext(), "Không thể lấy dữ liệu từ máy chủ", Toast.LENGTH_LONG).show();
     }
 }

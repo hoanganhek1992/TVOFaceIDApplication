@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -104,13 +103,16 @@ public class SearchContractFragment extends BaseFragment {
                 searchData(edtSearch.getText().toString().trim());
             }
         });
+
+        loadLendingData();
+        listenAllLending();
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        loadLendingData();
     }
 
     @Override
@@ -139,51 +141,9 @@ public class SearchContractFragment extends BaseFragment {
             }
         });
 
-
-        /*String contractId = "ED01157881";
-        String cus_name = "Trần Quang Thái";
-        String created_at = "01/12/2019 17:12";
-        String status = "Trạng thái: Đã duyệt";
-        for (int i = 0; i < 10; i++) {
-            myLendingList.add(new Contract(contractId + i, cus_name + i, created_at, status));
-        }*/
-
     }
 
-    private void searchLendingData(String data) {
-        if (mProgressDialog != null) {
-            mProgressDialog.show();
-        }
-        ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().searchLending(data, new MyFirebase.GetAllLendingCallback() {
-            @Override
-            public void onGetLendingSuccess(List<MyLending> list) {
-                Log.e("TAG", "Search: onGetLendingSuccess - " + list.size());
-                mProgressDialog.dismiss();
-                myLendingList.clear();
-                myLendingList.addAll(list);
-                mContractAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onGetLendingError(Exception e) {
-                Log.e("TAG", "Search: onGetLendingError");
-                mProgressDialog.dismiss();
-                Toast.makeText(getContext(), "Không thể load danh sách hợp đồng", Toast.LENGTH_LONG).show();
-            }
-        });
-
-
-        /*String contractId = "ED01157881";
-        String cus_name = "Trần Quang Thái";
-        String created_at = "01/12/2019 17:12";
-        String status = "Trạng thái: Đã duyệt";
-        for (int i = 0; i < 10; i++) {
-            myLendingList.add(new Contract(contractId + i, cus_name + i, created_at, status));
-        }*/
-
-    }
-
-    public void searchData(String data) {
+    private void searchData(String data) {
         List<MyLending> mList = new ArrayList<>();
         for (MyLending lending : myTotalLendingList) {
             if (lending.getId().contains(data)) {
@@ -193,5 +153,18 @@ public class SearchContractFragment extends BaseFragment {
         myLendingList.clear();
         myLendingList.addAll(mList);
         mContractAdapter.notifyDataSetChanged();
+    }
+
+    private void listenAllLending() {
+        ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().listenAllLending(new MyFirebase.ListenAllLendingCallback() {
+            @Override
+            public void onLendingChange(List<MyLending> list) {
+                myLendingList.clear();
+                myTotalLendingList.clear();
+                myLendingList.addAll(list);
+                myTotalLendingList.addAll(list);
+                searchData(edtSearch.getText().toString().trim());
+            }
+        });
     }
 }

@@ -249,6 +249,7 @@ public class LendingActivity extends AppCompatActivity {
                     BitMapToString(imgTop),
                     BitMapToString(imgDown),
                     df.format(Calendar.getInstance().getTime()),
+                    df.format(Calendar.getInstance().getTime()),
                     "Thành công"
             );
             myFirebase.addLending(lending, new MyFirebase.LendingCallback() {

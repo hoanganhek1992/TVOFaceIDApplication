@@ -22,8 +22,12 @@ import androidx.core.app.ActivityCompat;
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.example.tvofaceidapplication.model.MyEmployee;
+import com.example.tvofaceidapplication.model.MyLocation;
+import com.example.tvofaceidapplication.ui.home.HomeActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
@@ -45,8 +49,9 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public static final String CONTRACT_OBJECT = "contract_object";
-    public static final String SAVE_DATA_LOGIN = "save_data_login";
-    public static final String SAVE_WIFI_SSID_LOGIN = "save_wifi_ssid_login";
+    public static final String SAVE_TIME_LOGIN = "save_time_login";
+    public static final String SAVE_EMPLOYEE_LOGIN = "save_employee_login";
+    public static final String SAVE_LOCATION_LOGIN = "save_wifi_ssid_login";
 
     private BaseToolbar baseToolbar;
 
@@ -145,26 +150,59 @@ public class BaseActivity extends AppCompatActivity {
         return null;
     }
 
-    public void saveLoginSession(String wifi_name) {
+    public void saveLoginSession(MyLocation location, MyEmployee employee) {
         Log.e("TAG", "saveLoginSession");
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMdd");
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(BaseActivity.SAVE_DATA_LOGIN, df.format(Calendar.getInstance().getTime()));
-        editor.putString(BaseActivity.SAVE_WIFI_SSID_LOGIN, wifi_name);
-
+        editor.putString(BaseActivity.SAVE_TIME_LOGIN, df.format(Calendar.getInstance().getTime()));
+        Gson gson = new Gson();
+        String json_location = gson.toJson(location);
+        editor.putString(BaseActivity.SAVE_LOCATION_LOGIN, json_location);
+        String json_employee = gson.toJson(employee);
+        editor.putString(BaseActivity.SAVE_EMPLOYEE_LOGIN, json_employee);
         editor.apply();
     }
 
     public boolean isLogin() {
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMdd");
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        Log.e("TAG", "isLogin" + sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime())) + "");
-        return sharedPref.getString(BaseActivity.SAVE_DATA_LOGIN, "").equals(df.format(Calendar.getInstance().getTime()));
+        Log.e("TAG", "isLogin" + sharedPref.getString(BaseActivity.SAVE_TIME_LOGIN, "").equals(df.format(Calendar.getInstance().getTime())) + "");
+        return sharedPref.getString(BaseActivity.SAVE_TIME_LOGIN, "").equals(df.format(Calendar.getInstance().getTime()));
+    }
+
+    public void clearLogin() {
+        HomeActivity.isLogin = false;
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(BaseActivity.SAVE_TIME_LOGIN, "");
+        editor.putString(BaseActivity.SAVE_LOCATION_LOGIN, "");
+        editor.putString(BaseActivity.SAVE_EMPLOYEE_LOGIN, "");
+        editor.apply();
+
     }
 
     public String getWifiSsid() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        return sharedPref.getString(BaseActivity.SAVE_WIFI_SSID_LOGIN, "");
+        Gson gson = new Gson();
+        String json = sharedPref.getString(SAVE_LOCATION_LOGIN, "");
+        MyLocation location = gson.fromJson(json, MyLocation.class);
+        if (location != null)
+            return location.getWifi_ssid();
+        return "";
+    }
+
+    public MyEmployee loadLoginUser() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPref.getString(SAVE_EMPLOYEE_LOGIN, "");
+        return gson.fromJson(json, MyEmployee.class);
+    }
+
+    public MyLocation loadLoginLocation() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPref.getString(SAVE_LOCATION_LOGIN, "");
+        return gson.fromJson(json, MyLocation.class);
     }
 }

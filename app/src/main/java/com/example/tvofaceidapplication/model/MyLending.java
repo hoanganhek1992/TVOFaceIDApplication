@@ -7,12 +7,12 @@ import java.io.Serializable;
 @IgnoreExtraProperties
 public class MyLending implements Serializable {
 
-    private String id, name, address, birth_date, cmnd, image, cmnd_1, cmnd_2, created_at, status, store = "ED HT ĐIỆN MÁY XANH 224", phone = "09336254243";
+    private String id, name, address, birth_date, cmnd, image, cmnd_1, cmnd_2, created_at, updated_at, status, store = "ED HT ĐIỆN MÁY XANH 224", phone = "09336254243";
 
     public MyLending() {
     }
 
-    public MyLending(String id, String name, String address, String birth_date, String cmnd, String image, String cmnd_1, String cmnd_2, String created_at, String status) {
+    public MyLending(String id, String name, String address, String birth_date, String cmnd, String image, String cmnd_1, String cmnd_2, String created_at, String updated_at, String status) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -22,6 +22,7 @@ public class MyLending implements Serializable {
         this.cmnd_1 = cmnd_1;
         this.cmnd_2 = cmnd_2;
         this.created_at = created_at;
+        this.updated_at = updated_at;
         this.status = status;
     }
 
@@ -95,6 +96,14 @@ public class MyLending implements Serializable {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 
     public String getStatus() {

@@ -18,23 +18,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeFullScreen"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.new_lending.finish.FinishLendingActivity" />
-        <activity android:name=".ui.new_lending.addnew.NewLendingActivity" />
-        <activity android:name=".ui.contract_detail.ContractDetailActivity" />
-        <activity android:name=".ui.splash.SplashScreen">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
-        <activity android:name=".ui.home.HomeActivity">
+        <activity android:name=".ui.parse_cmnd.TestParseCmndActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.new_lending.finish.FinishLendingActivity" />
+        <activity android:name=".ui.new_lending.addnew.NewLendingActivity" />
+        <activity android:name=".ui.contract_detail.ContractDetailActivity" />
+        <activity
+            android:name=".ui.splash.SplashScreen"
+            android:theme="@style/AppTheme_NoStatusBar">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+        <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.ListEmployeeActivity" />
         <activity android:name=".ui.AddEmployeeActivity" />
         <activity android:name=".ui.WifiCheckActivity" />
