@@ -159,6 +159,7 @@ public class SearchContractFragment extends BaseFragment {
         ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().listenAllLending(new MyFirebase.ListenAllLendingCallback() {
             @Override
             public void onLendingChange(List<MyLending> list) {
+                Log.e("onLendingChange", list.size() +"");
                 myLendingList.clear();
                 myTotalLendingList.clear();
                 myLendingList.addAll(list);

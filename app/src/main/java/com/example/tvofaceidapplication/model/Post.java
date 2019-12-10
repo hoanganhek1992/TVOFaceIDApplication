@@ -31,4 +31,5 @@ public class Post {
         this.result = result;
     }
 
+
 }

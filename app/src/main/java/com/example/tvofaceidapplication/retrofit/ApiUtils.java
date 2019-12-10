@@ -3,7 +3,7 @@ package com.example.tvofaceidapplication.retrofit;
 public class ApiUtils {
     private ApiUtils() {}
 
-    public static final String BASE_URL = "https://262cf100.ngrok.io/";
+    public static final String BASE_URL = "https://705cd208.ngrok.io/check-image/";
 
     public static APIService getAPIService() {
 

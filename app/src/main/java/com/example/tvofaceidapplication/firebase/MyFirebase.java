@@ -130,6 +130,7 @@ public class MyFirebase {
                                 MyLending lending = document.toObject(MyLending.class);
                                 myLendingList.add(lending);
                             }
+                            Log.d("listenAllLending", "getAllLending: " + myLendingList.size());
                             callback.onGetLendingSuccess(myLendingList);
                         } else {
                             callback.onGetLendingError(task.getException());
@@ -200,7 +201,7 @@ public class MyFirebase {
                                 list.add(doc.toObject(MyLending.class));
                             }
                         }
-                        Log.d("listenAllLending", "Current cites in CA: " + list);
+                        Log.d("listenAllLending", "listenAllLending: " + list.size());
 
                         callback.onLendingChange(list);
                     }

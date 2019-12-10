@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="external"
+        path="Android/data/com.example.tvofaceidapplication/files/Pictures" />
+    <files-path
+        name="files"
+        path="Android/data/com.example.tvofaceidapplication/files/Pictures" />
+</paths>

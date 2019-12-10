@@ -1,17 +1,23 @@
 package com.example.tvofaceidapplication.retrofit;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-
+import com.example.tvofaceidapplication.model.MyFaceCheck;
 import com.example.tvofaceidapplication.model.Post;
+import com.example.tvofaceidapplication.model.Result;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface APIService {
+
+    @Multipart
     @POST("/check-image")
-    @FormUrlEncoded
-    Call<Post> savePost(@Field("file") Bitmap bmp);
+    Call<Post> detachCmnd(@Part MultipartBody.Part img);
+
+    @Multipart
+    @POST("/verify-faces")
+    Call<MyFaceCheck> faceIdentical(@Part MultipartBody.Part img1,
+                                    @Part MultipartBody.Part img2);
 }

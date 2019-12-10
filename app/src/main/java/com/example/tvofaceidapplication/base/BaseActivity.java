@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -30,9 +31,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -43,9 +47,11 @@ public class BaseActivity extends AppCompatActivity {
 
     public static final int PERMISSION_CAMERA = 101;
     public static final int PERMISSION_LOCATION = 102;
-    public static final int CAMERA_VIEW_AVT = 103;
-    public static final int CAMERA_VIEW_CMND_1 = 104;
-    public static final int CAMERA_VIEW_CMND_2 = 105;
+    public static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 103;
+    public static final int CAMERA_VIEW_AVT = 201;
+    public static final int CAMERA_VIEW_CMND_1 = 202;
+    public static final int CAMERA_VIEW_CMND_2 = 203;
+
 
 
     public static final String CONTRACT_OBJECT = "contract_object";
@@ -204,5 +210,19 @@ public class BaseActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = sharedPref.getString(SAVE_LOCATION_LOGIN, "");
         return gson.fromJson(json, MyLocation.class);
+    }
+
+    public File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        // Save a file: path for use with ACTION_VIEW intents
+        return File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
     }
 }
