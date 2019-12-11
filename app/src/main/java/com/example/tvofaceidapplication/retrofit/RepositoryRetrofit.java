@@ -7,6 +7,8 @@ import com.example.tvofaceidapplication.model.Post;
 import com.example.tvofaceidapplication.model.Prediction;
 import com.example.tvofaceidapplication.model.Result;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +36,7 @@ public class RepositoryRetrofit {
         return myRetrofit;
     }
 
-    public RepositoryRetrofit() {
+    private RepositoryRetrofit() {
         mAPIService = ApiUtils.getAPIService();
     }
 
@@ -48,9 +50,9 @@ public class RepositoryRetrofit {
 
         mAPIService.detachCmnd(body).enqueue(new Callback<Post>() {
             @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
+            public void onResponse(@NotNull Call<Post> call, @NotNull Response<Post> response) {
                 if (response.isSuccessful()) {
-                    List<Result> results = response.body().getResult();
+                    List<Result> results = Objects.requireNonNull(response.body()).getResult();
                     if (results != null && results.size() > 0) {
                         callback.onDetachSuccess(results.get(0).getPrediction());
                     }
@@ -58,7 +60,7 @@ public class RepositoryRetrofit {
             }
 
             @Override
-            public void onFailure(Call<Post> call, Throwable t) {
+            public void onFailure(@NotNull Call<Post> call, @NotNull Throwable t) {
                 Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
                 callback.onDetachError(t);
             }
@@ -82,14 +84,14 @@ public class RepositoryRetrofit {
 
         mAPIService.faceIdentical(body1, body2).enqueue(new Callback<MyFaceCheck>() {
             @Override
-            public void onResponse(Call<MyFaceCheck> call, Response<MyFaceCheck> response) {
+            public void onResponse(@NotNull Call<MyFaceCheck> call, @NotNull Response<MyFaceCheck> response) {
                 if (response.isSuccessful()) {
                     callback.onCheckIdenticalSuccess(Objects.requireNonNull(response.body()).isIdentical());
                 } else callback.onCheckIdenticalError(null);
             }
 
             @Override
-            public void onFailure(Call<MyFaceCheck> call, Throwable t) {
+            public void onFailure(@NotNull Call<MyFaceCheck> call, @NotNull Throwable t) {
                 Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
                 callback.onCheckIdenticalError(t);
             }
