@@ -99,4 +99,12 @@
     <string name="text_notification_outside_checkin">Bạn đã ra khỏi khu vực chấm công</string>
     <string name="text_notification_inside_checkin">Bạn đã vào khu vực chấm công</string>
     <string name="text_send_title">Send</string>
+    <string name="text_take_picture_title">Take picture</string>
+    <string name="text_face_check_title">Face check</string>
+
+    <string name="text_fail_detach_data">Không thể detach dữ liệu</string>
+    <string name="text_picture_1">Picture 1</string>
+    <string name="text_picture_2">Picture 2</string>
+    <string name="text_check_face_identical">Check Face Identical</string>
+    <string name="text_error_title">Error</string>
 </resources>

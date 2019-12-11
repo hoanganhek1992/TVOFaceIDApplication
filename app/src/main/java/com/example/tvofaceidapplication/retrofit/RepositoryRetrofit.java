@@ -18,23 +18,23 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyRetrofit {
+public class RepositoryRetrofit {
     private static final String KEY_DETACH_CMND = "file";
     private static final String KEY_IDENTICAL_FILE_1 = "file1";
     private static final String KEY_IDENTICAL_FILE_2 = "file2";
 
-    private static MyRetrofit myRetrofit;
+    private static RepositoryRetrofit myRetrofit;
     private APIService mAPIService;
 
 
-    public static MyRetrofit getInstance() {
+    public static RepositoryRetrofit getInstance() {
         if (myRetrofit == null) {
-            myRetrofit = new MyRetrofit();
+            myRetrofit = new RepositoryRetrofit();
         }
         return myRetrofit;
     }
 
-    public MyRetrofit() {
+    public RepositoryRetrofit() {
         mAPIService = ApiUtils.getAPIService();
     }
 
@@ -84,10 +84,8 @@ public class MyRetrofit {
             @Override
             public void onResponse(Call<MyFaceCheck> call, Response<MyFaceCheck> response) {
                 if (response.isSuccessful()) {
-                    assert response.body() != null;
-                    callback.onCheckIdenticalSuccess(response.body().isIdentical());
-
-                }
+                    callback.onCheckIdenticalSuccess(Objects.requireNonNull(response.body()).isIdentical());
+                } else callback.onCheckIdenticalError(null);
             }
 
             @Override

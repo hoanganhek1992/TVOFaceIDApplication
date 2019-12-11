@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
@@ -25,6 +26,7 @@ import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.model.MyLocation;
+import com.example.tvofaceidapplication.retrofit.RepositoryRetrofit;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -141,6 +143,10 @@ public class BaseActivity extends AppCompatActivity {
         return MyApplication.getInstance();
     }
 
+    public RepositoryRetrofit getMyRetrofit(){
+        return RepositoryRetrofit.getInstance();
+    }
+
     public void pickImage(int permission_number) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, permission_number);
@@ -224,5 +230,12 @@ public class BaseActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+    }
+
+    public Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 }

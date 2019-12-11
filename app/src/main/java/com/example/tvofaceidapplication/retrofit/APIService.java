@@ -2,7 +2,6 @@ package com.example.tvofaceidapplication.retrofit;
 
 import com.example.tvofaceidapplication.model.MyFaceCheck;
 import com.example.tvofaceidapplication.model.Post;
-import com.example.tvofaceidapplication.model.Result;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;

@@ -1,29 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.parse_cmnd.TestParseCmndActivity">
+    tools:context=".ui.test_api.TestParseCmndActivity">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_send_cmnd"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/text_send_title"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/tv_response"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
-
-    <ImageView
-        android:id="@+id/iv_picture"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:ignore="ContentDescription" />
+        android:orientation="vertical"
+        tools:ignore="UselessLeaf">
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_take_picture"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_take_picture_title"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_send_cmnd"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_send_title"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/iv_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_response"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_padding_medium"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_face_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/default_margin_large"
+        android:backgroundTint="@color/blue_2"
+        android:src="@drawable/ic_person"
+        android:tint="@color/white" />
+
+</RelativeLayout>

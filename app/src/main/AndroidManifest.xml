@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
@@ -20,12 +19,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeFullScreen"
+        android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.parse_cmnd.TestParseCmndActivity">
+        <activity android:name=".ui.test_api.TestFaceCheckActivity"></activity>
+        <activity android:name=".ui.test_api.TestParseCmndActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,11 +38,14 @@
         <activity
             android:name=".ui.splash.SplashScreen"
             android:theme="@style/AppTheme_NoStatusBar">
-            <!--<intent-filter>
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.ListEmployeeActivity" />
@@ -63,8 +66,6 @@
                 android:resource="@xml/file_paths"
                 tools:replace="android:resource" />
         </provider>
-
-
     </application>
 
 </manifest>
