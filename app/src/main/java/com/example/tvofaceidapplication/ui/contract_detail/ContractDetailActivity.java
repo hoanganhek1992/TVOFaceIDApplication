@@ -100,22 +100,30 @@ public class ContractDetailActivity extends BaseActivity implements View.OnClick
     }
 
     private void loadDataToView() {
-        mContractNumber.setText(mCurrentLending.getId());
-        mCOntractCreatedAt.setText(mCurrentLending.getCreatedAt_parse());
-        mContractStatus.setText(mCurrentLending.getStatus());
-        mContractStore.setText(mCurrentLending.getStore());
+        if (mCurrentLending.getId() != null)
+            mContractNumber.setText(mCurrentLending.getId());
+        if (mCurrentLending.getCreatedAt_parse() != null)
+            mCOntractCreatedAt.setText(mCurrentLending.getCreatedAt_parse());
+        if (mCurrentLending.getStatus() != null)
+            mContractStatus.setText(mCurrentLending.getStatus());
+        if (mCurrentLending.getStore() != null)
+            mContractStore.setText(mCurrentLending.getStore());
 
-        mCusName.setText(mCurrentLending.getName());
-        mCusBirthDate.setText(mCurrentLending.getBirth_date());
-        mCusPhone.setText(mCurrentLending.getPhone());
-        mCusCMND.setText(mCurrentLending.getCmnd());
+        if (mCurrentLending.getName() != null)
+            mCusName.setText(mCurrentLending.getName());
+        if (mCurrentLending.getBirth_date() != null)
+            mCusBirthDate.setText(mCurrentLending.getBirth_date());
+        if (mCurrentLending.getPhone() != null)
+            mCusPhone.setText(mCurrentLending.getPhone());
+        if (mCurrentLending.getCmnd() != null)
+            mCusCMND.setText(mCurrentLending.getCmnd());
 
         if (mCurrentLending.getCmnd_1() != null) {
             try {
                 byte[] decodedString = Base64.decode(mCurrentLending.getCmnd_1(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 ivCmnd1.setImageBitmap(decodedByte);
-                Drawable d = ResourcesCompat.getDrawable(getResources(),R.drawable.cmnd_test_1, null);
+                Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.cmnd_test_1, null);
                 isCmnd1 = true;
             } catch (Exception ignore) {
             }
