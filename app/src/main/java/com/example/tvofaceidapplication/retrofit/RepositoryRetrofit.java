@@ -1,7 +1,9 @@
 package com.example.tvofaceidapplication.retrofit;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.model.MyFaceCheck;
 import com.example.tvofaceidapplication.model.Post;
 import com.example.tvofaceidapplication.model.Prediction;
@@ -41,9 +43,11 @@ public class RepositoryRetrofit {
     }
 
     public void detachCmnd(String path, final DeTachCmndCallback callback) {
-        File file = new File(path);
+        File file = BaseActivity.resizeFile(new File(path));
+
         final RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                RequestBody.create(Objects.requireNonNull(file), MediaType.parse("multipart/form-data"));
+        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
 
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData(KEY_DETACH_CMND, file.getName(), requestFile);
@@ -55,29 +59,40 @@ public class RepositoryRetrofit {
                     List<Result> results = Objects.requireNonNull(response.body()).getResult();
                     if (results != null && results.size() > 0) {
                         callback.onDetachSuccess(results.get(0).getPrediction());
+                    } else {
+                        callback.onDetachError("Response result = 0");
                     }
+                } else {
+                    callback.onDetachError("Can not connect to API…");
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<Post> call, @NotNull Throwable t) {
                 Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
-                callback.onDetachError(t);
+                callback.onDetachError(t.getMessage());
             }
         });
     }
 
     public void checkIdentical(String path1, String path2, final CheckIdenticalCallback callback) {
-        File file1 = new File(path1);
+        File file1 = BaseActivity.resizeFile(new File(path1));
+
         final RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+                RequestBody.create(Objects.requireNonNull(file1), MediaType.parse("multipart/form-data"));
+
+        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file1.length())) / 1024 + "");
 
         MultipartBody.Part body1 =
                 MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_1, file1.getName(), requestFile);
 
+        //File file2 = BaseActivity.resizeFile(new File(path2));
+
         File file2 = new File(path2);
+
         final RequestBody requestFile2 =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file2);
+                RequestBody.create(file2, MediaType.parse("multipart/form-data"));
+        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file2.length())) / 1024 + "");
 
         MultipartBody.Part body2 =
                 MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_2, file2.getName(), requestFile2);
@@ -87,27 +102,61 @@ public class RepositoryRetrofit {
             public void onResponse(@NotNull Call<MyFaceCheck> call, @NotNull Response<MyFaceCheck> response) {
                 if (response.isSuccessful()) {
                     callback.onCheckIdenticalSuccess(Objects.requireNonNull(response.body()).isIdentical());
-                } else callback.onCheckIdenticalError(null);
+                } else callback.onCheckIdenticalError("Can not connect to API…");
             }
 
             @Override
             public void onFailure(@NotNull Call<MyFaceCheck> call, @NotNull Throwable t) {
                 Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
-                callback.onCheckIdenticalError(t);
+                callback.onCheckIdenticalError(t.getMessage());
             }
         });
     }
 
+    public void checkIdenticalWithResource(File resource_1, File resource_2, final CheckIdenticalCallback callback) {
+        File file1 = BaseActivity.resizeFile(resource_1);
+        assert file1 != null;
+        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file1.length())) / 1024 + "");
+        final RequestBody requestFile =
+                RequestBody.create(file1, MediaType.parse("multipart/form-data"));
+
+        MultipartBody.Part body1 =
+                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_1, file1.getName(), requestFile);
+
+        /*File file2 = BaseActivity.resizeFile(resource_2);
+        assert file2 != null;*/
+        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(resource_2.length())) / 1024 + "");
+        final RequestBody requestFile2 =
+                RequestBody.create(resource_2, MediaType.parse("multipart/form-data"));
+
+        MultipartBody.Part body2 =
+                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_2, resource_2.getName(), requestFile2);
+
+        mAPIService.faceIdentical(body1, body2).enqueue(new Callback<MyFaceCheck>() {
+            @Override
+            public void onResponse(@NotNull Call<MyFaceCheck> call, @NotNull Response<MyFaceCheck> response) {
+                if (response.isSuccessful()) {
+                    callback.onCheckIdenticalSuccess(Objects.requireNonNull(response.body()).isIdentical());
+                } else callback.onCheckIdenticalError("Can not connect to API…");
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<MyFaceCheck> call, @NotNull Throwable t) {
+                Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
+                callback.onCheckIdenticalError(t.getMessage());
+            }
+        });
+    }
 
     public interface DeTachCmndCallback {
         void onDetachSuccess(List<Prediction> list);
 
-        void onDetachError(Throwable t);
+        void onDetachError(String t);
     }
 
     public interface CheckIdenticalCallback {
         void onCheckIdenticalSuccess(boolean isIdentical);
 
-        void onCheckIdenticalError(Throwable t);
+        void onCheckIdenticalError(String t);
     }
 }

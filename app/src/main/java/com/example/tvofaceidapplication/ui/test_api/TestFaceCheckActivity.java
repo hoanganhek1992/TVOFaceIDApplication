@@ -187,10 +187,10 @@ public class TestFaceCheckActivity extends BaseActivity implements View.OnClickL
             }
 
             @Override
-            public void onCheckIdenticalError(Throwable t) {
+            public void onCheckIdenticalError(String t) {
                 mProgressDialog.dismiss();
                 if (t != null) {
-                    mResponseTv.setText(t.getMessage());
+                    mResponseTv.setText(t);
                 }else {
                     mResponseTv.setText(getResources().getString(R.string.text_error_title));
                 }

@@ -11,7 +11,8 @@
         android:id="@+id/imgEmployee"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:src="@drawable/icon_add_employee" />
+        android:src="@drawable/icon_add_employee"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +34,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:imeOptions="actionDone"
-            android:singleLine="true" />
+            android:singleLine="true"
+            tools:ignore="Autofill,LabelFor,TextFields" />
     </LinearLayout>
 
     <Button
@@ -43,7 +45,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/bg_buttom_mainscreen"
-        android:text="Đồng ý"
+        android:text="@string/text_agree_title"
         android:textColor="@color/white" />
 
     <View

@@ -19,7 +19,8 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/user_inf_content"
             android:background="@color/gray"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="DisableBaselineAlignment">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -90,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="@dimen/default_margin_medium"
+            android:layout_marginTop="@dimen/default_margin_small"
             android:orientation="vertical"
             android:padding="@dimen/default_padding_medium">
 

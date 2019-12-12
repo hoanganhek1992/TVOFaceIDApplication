@@ -10,6 +10,10 @@ import com.example.tvofaceidapplication.R;
 
 public class BaseToolbar {
 
+    public static final int TITLE_ALIGN_CODE_LEFT = 0;
+    public static final int TITLE_ALIGN_CODE_CENTER = 1;
+    public static final int TITLE_ALIGN_CODE_RIGHT = 2;
+
     private Toolbar toolbar;
     private ImageView toolbar_leftIcon;
     private TextView toolbar_title;
@@ -53,6 +57,20 @@ public class BaseToolbar {
                 callback.onLeftIconClick();
             }
         });
+    }
+
+    public void setTitleAlign(int number) {
+        switch (number) {
+            case TITLE_ALIGN_CODE_LEFT:
+                toolbar_title.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                break;
+            case TITLE_ALIGN_CODE_CENTER:
+                toolbar_title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                break;
+            case TITLE_ALIGN_CODE_RIGHT:
+                toolbar_title.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+                break;
+        }
     }
 
     public interface LeftIconClickCallback {

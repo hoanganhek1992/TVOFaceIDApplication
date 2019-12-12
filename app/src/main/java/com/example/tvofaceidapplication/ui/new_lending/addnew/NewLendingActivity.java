@@ -1,10 +1,15 @@
 package com.example.tvofaceidapplication.ui.new_lending.addnew;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -14,19 +19,27 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.tvofaceidapplication.model.MyLending;
+import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseToolbar;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.example.tvofaceidapplication.model.MyLending;
+import com.example.tvofaceidapplication.model.Prediction;
+import com.example.tvofaceidapplication.retrofit.RepositoryRetrofit;
 import com.example.tvofaceidapplication.ui.new_lending.finish.FinishLendingActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
+
+import static androidx.core.content.FileProvider.getUriForFile;
 
 public class NewLendingActivity extends BaseActivity implements View.OnClickListener {
 
@@ -35,10 +48,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
     private String str_cmnd1, str_cmnd2, str_face;
     private LinearLayout llMatched;
 
-    private String default_name = "Nguyễn Hoàng Anh";
-    private String default_birthdate = "20/08/1992";
-    private String default_cmnd_number = "3662119934";
-    private String default_address = "Số 10 đường số 1, Phường 14, Quận 3, HCM";
+    private static String cmnd1Path = "", cmnd2Path = "", facePath = "";
 
     private ProgressDialog mProgressDialog;
 
@@ -80,7 +90,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("Đang tạo dữ liệu khoản vay...");
+        mProgressDialog.setMessage(getResources().getString(R.string.dialog_processing_image));
     }
 
     @Override
@@ -89,7 +99,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
             case R.id.new_lending_continue:
 
                 if (checkValidateForm()) {
-                    mProgressDialog.show();
+
                     @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
                     MyLending myLending = new MyLending("ED" + System.currentTimeMillis(),
                             Objects.requireNonNull(edtName.getText()).toString().trim(),
@@ -111,7 +121,18 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
 
                 break;
             case R.id.new_lending_checking:
-                checkValidateImg();
+                if (isCmnd1 && isCmnd2 & isFace) {
+                    detachCmnd(cmnd1Path);
+                    /*
+                    llMatched.setVisibility(View.VISIBLE);
+                    edtName.setText(default_name);
+                    edtBirthDate.setText(default_birthdate);
+                    edtCMND.setText(default_cmnd_number);
+                    edtAddress.setText(default_address);
+                    mContinueButton.setEnabled(true);*/
+                } else {
+                    Toast.makeText(getApplicationContext(), "Vui lòng thêm hình ảnh trước khi phân tích", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.detail_contract_add_cmnd_1:
                 pickImage(BaseActivity.CAMERA_VIEW_CMND_1);
@@ -132,10 +153,12 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
     }
 
     private void addLendingToDb(MyLending myLending) {
-
+        mProgressDialog.setMessage(getResources().getString(R.string.dialog_create_lending));
+        mProgressDialog.show();
         getMyFirebase().addLending(myLending, new MyFirebase.LendingCallback() {
             @Override
             public void onAddLendingSuccess() {
+                mProgressDialog.dismiss();
                 Intent intent = new Intent(NewLendingActivity.this, FinishLendingActivity.class);
                 startActivity(intent);
                 finish();
@@ -143,23 +166,13 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
 
             @Override
             public void onAddLendingFail(Exception err) {
+                if (err != null)
+                    Log.e("ERROR", err.getMessage());
+                mProgressDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Không thể thêm dữ liệu vào hệ thống", Toast.LENGTH_LONG).show();
             }
         });
 
-    }
-
-    private void checkValidateImg() {
-        if (isCmnd1 && isCmnd2 & isFace) {
-            llMatched.setVisibility(View.VISIBLE);
-            edtName.setText(default_name);
-            edtBirthDate.setText(default_birthdate);
-            edtCMND.setText(default_cmnd_number);
-            edtAddress.setText(default_address);
-            mContinueButton.setEnabled(true);
-        } else {
-            Toast.makeText(getApplicationContext(), "Vui lòng thêm hình ảnh trước khi phân tích", Toast.LENGTH_LONG).show();
-        }
     }
 
     private boolean checkValidateForm() {
@@ -170,29 +183,129 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                switch (requestCode) {
-                    case BaseActivity.CAMERA_VIEW_CMND_1:
-                        viewCmnd1.setImageBitmap(bitmap);
-                        isCmnd1 = true;
-                        str_cmnd1 = convertBitMapToString(bitmap);
-                        break;
-                    case BaseActivity.CAMERA_VIEW_CMND_2:
-                        viewCmnd2.setImageBitmap(bitmap);
-                        isCmnd2 = true;
-                        str_cmnd2 = convertBitMapToString(bitmap);
-                        break;
-                    case BaseActivity.CAMERA_VIEW_AVT:
-                        viewFace.setImageBitmap(bitmap);
-                        isFace = true;
-                        str_face = convertBitMapToString(bitmap);
-                        break;
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (resultCode == RESULT_OK) {
+                    switch (requestCode) {
+                        case BaseActivity.CAMERA_VIEW_CMND_1:
+                            Bitmap bmp_cmnd1 = parseBitmapFromPath(cmnd1Path, 240);
+                            if (bmp_cmnd1 != null) {
+                                viewCmnd1.setImageBitmap(bmp_cmnd1);
+                                isCmnd1 = true;
+                                str_cmnd1 = convertBitMapToString(bmp_cmnd1);
+                            }
+                            break;
+                        case BaseActivity.CAMERA_VIEW_CMND_2:
+                            Bitmap bmp_cmnd2 = parseBitmapFromPath(cmnd2Path, 180);
+                            if (bmp_cmnd2 != null) {
+                                viewCmnd2.setImageBitmap(bmp_cmnd2);
+                                isCmnd2 = true;
+                                str_cmnd2 = convertBitMapToString(bmp_cmnd2);
+                            }
+                            break;
+                        case BaseActivity.CAMERA_VIEW_AVT:
+                            Bitmap bmp_avt = parseBitmapFromPath(facePath, 180);
+                            if (bmp_avt != null) {
+                                viewFace.setImageBitmap(bmp_avt);
+                                isFace = true;
+                                str_face = convertBitMapToString(bmp_avt);
+                            }
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void pickImage(int permission_number) {
+        if (!checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, BaseActivity.PERMISSION_WRITE_EXTERNAL_STORAGE);
+        } else {
+            if (!checkPermissions(Manifest.permission.CAMERA)) {
+                requestPermissions(Manifest.permission.CAMERA, BaseActivity.PERMISSION_CAMERA);
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+
+                        switch (permission_number) {
+                            case CAMERA_VIEW_CMND_1:
+                                cmnd1Path = photoFile.getAbsolutePath();
+                                break;
+                            case CAMERA_VIEW_CMND_2:
+                                cmnd2Path = photoFile.getAbsolutePath();
+                                break;
+                            case CAMERA_VIEW_AVT:
+                                facePath = photoFile.getAbsolutePath();
+                                break;
+                        }
+                    } catch (IOException ignored) {
+                    }
+                    if (photoFile != null) {
+                        Uri photoUri = getUriForFile(getApplicationContext(),
+                                BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        startActivityForResult(takePictureIntent, permission_number);
+                    }
                 }
             }
         }
+    }
+
+    public void detachCmnd(String path) {
+        mProgressDialog.setMessage(getResources().getString(R.string.dialog_processing_image));
+        mProgressDialog.show();
+        getMyRetrofit().detachCmnd(path, new RepositoryRetrofit.DeTachCmndCallback() {
+            @Override
+            public void onDetachSuccess(List<Prediction> predictions) {
+                mProgressDialog.dismiss();
+                try {
+                    if (predictions == null || predictions.size() == 0) {
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_fail_detach_data), Toast.LENGTH_SHORT).show();
+                        Log.e("PRE", getResources().getString(R.string.text_fail_detach_data));
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_fail_detach_data), Toast.LENGTH_LONG).show();
+                    } else {
+                        for (Prediction pre : predictions) {
+                            Log.e("PRE", "Title: " + pre.getLabel());
+                            Log.e("PRE", "Ocr_text: " + pre.getOcrText());
+                            switch (pre.getLabel()) {
+                                case DETACH_VALUE_TITLE_ADDRESS:
+                                    edtAddress.setText(pre.getOcrText());
+                                    break;
+                                case DETACH_VALUE_TITLE_NAME:
+                                    edtName.setText(pre.getOcrText());
+                                    break;
+                                case DETACH_VALUE_TITLE_ID_NUMBER:
+                                    edtCMND.setText(pre.getOcrText());
+                                    break;
+                                case DETACH_VALUE_TITLE_BIRTHDAY:
+                                    edtBirthDate.setText(pre.getOcrText());
+                                    break;
+                            }
+                        }
+                        mContinueButton.setEnabled(true);
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+
+            @Override
+            public void onDetachError(String t) {
+                mProgressDialog.dismiss();
+                if (t != null) {
+                    Log.e("onFailure", Objects.requireNonNull(t));
+                    Toast.makeText(getApplicationContext(), t + "", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Lỗi không xác định...", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

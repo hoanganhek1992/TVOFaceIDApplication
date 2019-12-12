@@ -7,8 +7,8 @@ android {
         applicationId "com.example.tvofaceidapplication"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 3
-        versionName "2.0"
+        versionCode 4
+        versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -49,7 +49,7 @@ dependencies {
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.okhttp:okhttp:2.7.5'
+    implementation("com.squareup.okhttp3:okhttp:4.2.2")
     implementation "com.squareup.okhttp3:logging-interceptor:4.0.1"
 
     /*Gson (parse json to object)*/
@@ -63,7 +63,7 @@ dependencies {
     /*recycleview*/
     //noinspection GradleCompatible
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.1.0-alpha01'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

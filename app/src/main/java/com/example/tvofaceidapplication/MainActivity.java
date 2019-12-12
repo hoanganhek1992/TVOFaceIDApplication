@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.addEmployee:
+            case R.id.item_menu_add_employee:
                 Intent i = new Intent(MainActivity.this, AddEmployeeActivity.class);
                 startActivity(i);
                 break;
-            case R.id.listEmployee:
+            case R.id.item_menu_list_employee:
 
                 Intent i1 = new Intent(MainActivity.this, ListEmployeeActivity.class);
                startActivity(i1);

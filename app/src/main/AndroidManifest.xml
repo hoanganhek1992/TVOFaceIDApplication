@@ -24,13 +24,13 @@
         android:theme="@style/AppThemeFullScreen"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.test_api.TestFaceCheckActivity"></activity>
+        <activity android:name=".ui.test_api.TestFaceCheckActivity" />
         <activity android:name=".ui.test_api.TestParseCmndActivity">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity android:name=".ui.new_lending.finish.FinishLendingActivity" />
         <activity android:name=".ui.new_lending.addnew.NewLendingActivity" />
@@ -39,13 +39,11 @@
             android:name=".ui.splash.SplashScreen"
             android:theme="@style/AppTheme_NoStatusBar">
 
-            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
         </activity>
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.ListEmployeeActivity" />

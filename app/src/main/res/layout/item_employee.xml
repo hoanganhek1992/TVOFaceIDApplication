@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_margin="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <ImageView
-        android:cropToPadding="true"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:id="@+id/imgView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        tools:ignore="UselessParent">
 
-    <TextView
-        android:layout_marginStart="10dp"
-        android:textSize="20dp"
-        android:fontFamily="serif-monospace"
-        android:layout_gravity="center"
-        android:text="Nguyen Van A"
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/imgView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:scaleType="fitCenter"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:textSize="20sp" />
     </LinearLayout>
 </LinearLayout>

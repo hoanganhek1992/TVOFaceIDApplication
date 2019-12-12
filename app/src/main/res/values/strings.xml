@@ -93,6 +93,9 @@
 
     <string name="text_time_keeping_success_before">Bạn đã chấm công thành công.</string>
 
+    <string name="dialog_create_lending">Đang tạo dữ liệu khoản vay…</string>
+    <string name="dialog_processing_image">Đang kiểm tra dữ liệu hình ảnh…</string>
+
     <string name="text_close_title">Đóng</string>
     <string name="text_try_again_title">Thử lại</string>
     <string name="text_notify_title">Thông báo</string>
@@ -107,4 +110,10 @@
     <string name="text_picture_2">Picture 2</string>
     <string name="text_check_face_identical">Check Face Identical</string>
     <string name="text_error_title">Error</string>
+    <string name="text_error_cant_call_api">Can not connect to API…</string>
+    <string name="text_add_employee_title">Add Employee</string>
+    <string name="text_list_employee_title">List Employee</string>
+    <string name="text_agree_title">Đồng ý</string>
+
+
 </resources>

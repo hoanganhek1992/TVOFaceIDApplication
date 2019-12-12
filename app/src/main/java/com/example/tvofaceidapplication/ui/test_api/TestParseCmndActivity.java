@@ -129,11 +129,11 @@ public class TestParseCmndActivity extends BaseActivity implements View.OnClickL
             }
 
             @Override
-            public void onDetachError(Throwable t) {
+            public void onDetachError(String t) {
                 mProgressDialog.dismiss();
                 if (t != null) {
-                    mResponseTv.setText(t.getMessage());
-                    Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
+                    mResponseTv.setText(t);
+                    Log.e("onFailure", Objects.requireNonNull(t));
                 }
             }
         });

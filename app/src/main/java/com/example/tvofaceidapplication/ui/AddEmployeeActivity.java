@@ -1,60 +1,51 @@
 package com.example.tvofaceidapplication.ui;
 
 import android.Manifest;
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.model.MyEmployee;
+import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.tvofaceidapplication.model.MyEmployee;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Objects;
 
-public class AddEmployeeActivity extends AppCompatActivity {
+import static androidx.core.content.FileProvider.getUriForFile;
+
+public class AddEmployeeActivity extends BaseActivity {
+
     private final int CAMERA_PIC_REQUEST = 100;
     ImageView imgEmployee;
-    TextView textError;
     EditText edtName;
-    Button btnAdd;
-    Bitmap photo;
-    MyEmployee myEmployee;
-    MyFirebase myFirebase;
     AlertDialog successDialog;
     ProgressDialog progressDialog;
+
+    private String imgPath = "";
+    private String imgBase64 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee);
-        myFirebase = MyFirebase.getInstance(FirebaseFirestore.getInstance());
         imgEmployee = findViewById(R.id.imgEmployee);
         edtName = findViewById(R.id.editName);
-        btnAdd = findViewById(R.id.btnSuccess);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(R.string.loading_add_employee);
@@ -63,14 +54,14 @@ public class AddEmployeeActivity extends AppCompatActivity {
         imgEmployee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                processImage();
+                openCamera();
             }
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnSuccess).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edtName != null && photo != null) {
+                if (!edtName.getText().toString().trim().equals("") && !imgBase64.equals("")) {
                     uploadData();
                 }
             }
@@ -79,11 +70,18 @@ public class AddEmployeeActivity extends AppCompatActivity {
 
 
     public void showAlertDialogSuccess() {
+        progressDialog.dismiss();
         try {
             ViewGroup viewGroup = findViewById(android.R.id.content);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            View viewError = LayoutInflater.from(this).inflate(R.layout.notification_alear, viewGroup, false);
-            builder.setView(viewError);
+            View viewSuccess = LayoutInflater.from(this).inflate(R.layout.notification_alear, viewGroup, false);
+            viewSuccess.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    successDialog.dismiss();
+                }
+            });
+            builder.setView(viewSuccess);
             successDialog = builder.create();
             successDialog.show();
         } catch (Exception ignored) {
@@ -91,79 +89,56 @@ public class AddEmployeeActivity extends AppCompatActivity {
     }
 
     private void uploadData() {
-        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String date = df.format(Calendar.getInstance().getTime());
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         progressDialog.show();
-        myEmployee = new MyEmployee(System.currentTimeMillis() + "", edtName.getText().toString().trim(), BitMapToString(photo), date);
-        myFirebase.addEmployee(myEmployee, new MyFirebase.AddEmployeeCallback() {
+        MyEmployee myEmployee = new MyEmployee(System.currentTimeMillis() + "", edtName.getText().toString().trim(), imgBase64, df.format(Calendar.getInstance().getTime()));
+        getMyFirebase().addEmployee(myEmployee, new MyFirebase.AddEmployeeCallback() {
             @Override
             public void onAddEmployeeSuccess() {
                 showAlertDialogSuccess();
-                progressDialog.dismiss();
             }
         });
     }
 
-    public void startSuccess(View view) {
-        successDialog.dismiss();
-        Intent intent = new Intent(AddEmployeeActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    private void processImage() {
-        if (hasCameraPermission()) {
-            pickImage();
+    private void openCamera() {
+        if (!checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, BaseActivity.PERMISSION_WRITE_EXTERNAL_STORAGE);
         } else {
-            requestCameraPermission();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
-                photo = (Bitmap) data.getExtras().get("data");
-                imgEmployee.setImageBitmap(photo);
-                BitMapToString(photo);
+            if (!checkPermissions(Manifest.permission.CAMERA)) {
+                requestPermissions(Manifest.permission.CAMERA, BaseActivity.PERMISSION_CAMERA);
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                        imgPath = photoFile.getAbsolutePath();
+                    } catch (IOException ignored) {
+                    }
+                    if (photoFile != null) {
+                        Uri photoUri = getUriForFile(getApplicationContext(),
+                                BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        startActivityForResult(takePictureIntent, CAMERA_PIC_REQUEST);
+                    }
+                }
             }
         }
     }
 
-    public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream ByteStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
-        byte[] b = ByteStream.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-    private void pickImage() {
-
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PIC_REQUEST);
-    }
-
-    private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_PIC_REQUEST:
-                processImage();
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_PIC_REQUEST && resultCode == RESULT_OK) {
+            try {
+                Bitmap avt_bmp = parseBitmapFromPath(imgPath, 360);
+                if (avt_bmp != null) {
+                    imgEmployee.setImageBitmap(avt_bmp);
+                    imgBase64 = convertBitMapToString(avt_bmp);
+                }
+            } catch (Exception error) {
+                error.printStackTrace();
+            }
         }
     }
 }

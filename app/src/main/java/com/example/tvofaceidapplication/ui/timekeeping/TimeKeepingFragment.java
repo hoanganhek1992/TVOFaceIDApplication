@@ -8,11 +8,17 @@ import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,14 +28,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseFragment;
+import com.example.tvofaceidapplication.base.BaseToolbar;
 import com.example.tvofaceidapplication.broadcasts.WifiReceiver;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.model.MyEmployee;
 import com.example.tvofaceidapplication.model.MyLocation;
 import com.example.tvofaceidapplication.model.MyTimeKeeping;
+import com.example.tvofaceidapplication.retrofit.RepositoryRetrofit;
+import com.example.tvofaceidapplication.ui.AddEmployeeActivity;
+import com.example.tvofaceidapplication.ui.ListEmployeeActivity;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -48,6 +59,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,6 +70,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
+import static androidx.core.content.FileProvider.getUriForFile;
 import static java.lang.Double.parseDouble;
 
 public class TimeKeepingFragment extends BaseFragment implements View.OnClickListener {
@@ -78,8 +95,13 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
     private boolean mRequestingLocationUpdates = false;
+    private int verifyFaceItem = 0;
+    private List<MyEmployee> myEmployeeList;
     private int mCount = 0;
     private final int mMaxRepeat = 10;
+
+    private String imgPath = "";
+    private Bitmap imgBitmap = null;
 
 
     public static TimeKeepingFragment newInstance() {
@@ -103,10 +125,13 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         mImgResource = view.findViewById(R.id.profile_image);
         mCurrentImg = view.findViewById(R.id.time_keeping_currentImg);
         myLocationList = new ArrayList<>();
+        myEmployeeList = new ArrayList<>();
 
         // Set Toolbar
         setBaseToolbar((Toolbar) view.findViewById(R.id.toolbar));
         getBaseToolbar().onSetTitle("Chấm công");
+        getBaseToolbar().setTitleAlign(BaseToolbar.TITLE_ALIGN_CODE_LEFT);
+        setHasOptionsMenu(true);
 
         view.findViewById(R.id.time_keeping_openCamera).setOnClickListener(this);
 
@@ -139,6 +164,42 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
+    private void resetView() {
+        mName.setText("");
+        clearIcon(mName);
+        mId.setText("");
+        clearIcon(mId);
+        mImgResource.setImageResource(R.drawable.ic_person_2);
+        mLocation.setText("");
+        clearIcon(mLocation);
+        mWifi.setText("");
+        clearIcon(mWifi);
+
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.item_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.item_menu_add_employee:
+                startActivity(new Intent(getActivity(), AddEmployeeActivity.class));
+                break;
+            case R.id.item_menu_list_employee:
+                startActivity(new Intent(getActivity(), ListEmployeeActivity.class));
+                // do stuff, like showing settings fragment
+                break;
+        }
+
+        return super.onOptionsItemSelected(item); // important line
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -159,15 +220,46 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.e(TAG, "Fragment onActivityResult");
-        if (resultCode != 0) {
-            if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
-                if (requestCode == BaseActivity.CAMERA_VIEW_AVT) {
-                    Bitmap imgTop = (Bitmap) data.getExtras().get("data");
-                    mCurrentImg.setImageBitmap(imgTop);
-                    startChecking();
+    public void pickImage(int permission_number) {
+        if (!((HomeActivity) Objects.requireNonNull(getActivity())).checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ((HomeActivity) getActivity()).requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, BaseActivity.PERMISSION_WRITE_EXTERNAL_STORAGE);
+        } else {
+            if (!((HomeActivity) getActivity()).checkPermissions(Manifest.permission.CAMERA)) {
+                ((HomeActivity) getActivity()).requestPermissions(Manifest.permission.CAMERA, BaseActivity.PERMISSION_CAMERA);
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(Objects.requireNonNull(getContext()).getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = ((HomeActivity) getActivity()).createImageFile();
+                        imgPath = photoFile.getAbsolutePath();
+
+                    } catch (IOException ignored) {
+                    }
+                    if (photoFile != null) {
+                        Uri photoUri = getUriForFile(getContext(),
+                                BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        startActivityForResult(takePictureIntent, permission_number);
+                    }
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == BaseActivity.CAMERA_VIEW_AVT && resultCode == RESULT_OK) {
+            try {
+                imgBitmap = ((HomeActivity) Objects.requireNonNull(getActivity())).parseBitmapFromPath(imgPath, 720);
+                if (imgBitmap != null) {
+                    mCurrentImg.setImageBitmap(imgBitmap);
+                    startChecking();
+                } else {
+                    Toast.makeText(getContext(), "Không thể chụp hình", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception error) {
+                error.printStackTrace();
             }
         }
 
@@ -188,6 +280,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
     private void startChecking() {
         HomeActivity.isChecking = true;
         HomeActivity.isLogin = false;
+        resetView();
 
         ((HomeActivity) Objects.requireNonNull(getActivity())).onUnListenWifiReceive();
         ((HomeActivity) Objects.requireNonNull(getActivity())).clearLogin();
@@ -197,25 +290,13 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
                 getMyFirebase().getEmployee(new MyFirebase.GetEmployeeCallback() {
             @Override
             public void onGetEmployeeSuccess(List<MyEmployee> list) {
-                onShowProgress("", false);
+                //onShowProgress("", false);
                 if (list != null && list.size() > 0) {
-                    mTrueEmployee = list.get(1);
-                    mName.setText(mTrueEmployee.getName());
-                    setSuccessIcon(mName);
-                    mId.setText(mTrueEmployee.getId());
-                    setSuccessIcon(mId);
-                    if (mTrueEmployee.getImage() != null) {
-                        try {
-                            byte[] decodedString = Base64.decode(mTrueEmployee.getImage(), Base64.DEFAULT);
-                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                            mImgResource.setImageBitmap(decodedByte);
-                        } catch (Exception ignore) {
-                        }
-
-                    }
-                    ((HomeActivity) Objects.requireNonNull(getActivity())).getMyApplication().setmCurrentEmployee(mTrueEmployee);
-
-                    getListLocation();
+                    myEmployeeList.clear();
+                    myEmployeeList.addAll(list);
+                    //BẮT ĐẦU SO SÁNH HÌNH ẢNH...
+                    verifyFaceItem = 0;
+                    verifyFaceHandler.post(verifyFaceRunnable);
                 }
             }
 
@@ -256,6 +337,10 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
 
     private void setSuccessIcon(TextInputEditText view) {
         view.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.ic_success, null), null);
+    }
+
+    private void clearIcon(TextInputEditText view) {
+        view.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 
     private void setFailIcon(TextInputEditText view) {
@@ -439,4 +524,58 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         HomeActivity.isChecking = false;
         ((HomeActivity) Objects.requireNonNull(getActivity())).showErrorDialog();
     }
+
+    private Handler verifyFaceHandler = new Handler();
+    private Runnable verifyFaceRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (verifyFaceItem < myEmployeeList.size()) {
+                File verifyFaces_File1 = ((HomeActivity) Objects.requireNonNull(getActivity())).parseBitmapToFile(imgBitmap);
+                Bitmap bmp2 = ((HomeActivity) Objects.requireNonNull(getActivity())).convertStringToBitMap(myEmployeeList.get(verifyFaceItem).getImage());
+                File verifyFaces_File2 = ((HomeActivity) Objects.requireNonNull(getActivity())).parseBitmapToFile(bmp2);
+                if (verifyFaces_File2 != null) {
+                    ((HomeActivity) getActivity()).getMyRetrofit().checkIdenticalWithResource(verifyFaces_File1, verifyFaces_File2, new RepositoryRetrofit.CheckIdenticalCallback() {
+                        @Override
+                        public void onCheckIdenticalSuccess(boolean isIdentical) {
+                            Log.e("FOREACH_EMPLOYEE", "onCheckIdenticalSuccess " + isIdentical);
+                            if (isIdentical) {
+                                onShowProgress("", false);
+                                mTrueEmployee = myEmployeeList.get(verifyFaceItem);
+                                mName.setText(mTrueEmployee.getName());
+                                setSuccessIcon(mName);
+                                mId.setText(mTrueEmployee.getId());
+                                setSuccessIcon(mId);
+                                if (mTrueEmployee.getImage() != null) {
+                                    try {
+                                        mImgResource.setImageBitmap(((HomeActivity) Objects.requireNonNull(getActivity())).convertStringToBitMap(mTrueEmployee.getImage()));
+                                    } catch (Exception ignore) {
+                                    }
+                                }
+                                ((HomeActivity) Objects.requireNonNull(getActivity())).getMyApplication().setmCurrentEmployee(mTrueEmployee);
+
+                                getListLocation();
+                            } else {
+                                //False -> check next employee
+                                verifyFaceItem++;
+                                verifyFaceHandler.post(verifyFaceRunnable);
+                            }
+                        }
+
+                        @Override
+                        public void onCheckIdenticalError(String t) {
+                            Log.e("FOREACH_EMPLOYEE", "onCheckIdenticalError " + t);
+                            verifyFaceItem++;
+                            verifyFaceHandler.post(verifyFaceRunnable);
+                        }
+                    });
+                } else {
+                    verifyFaceHandler.removeCallbacks(verifyFaceRunnable);
+                    verifyFaceItem++;
+                    verifyFaceHandler.post(verifyFaceRunnable);
+                }
+            } else {
+                showErrorDialog();
+            }
+        }
+    };
 }

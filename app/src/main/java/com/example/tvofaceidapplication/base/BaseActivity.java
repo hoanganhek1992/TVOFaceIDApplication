@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.example.tvofaceidapplication.MyApplication;
 import com.example.tvofaceidapplication.R;
@@ -34,6 +36,8 @@ import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,11 +59,16 @@ public class BaseActivity extends AppCompatActivity {
     public static final int CAMERA_VIEW_CMND_2 = 203;
 
 
-
     public static final String CONTRACT_OBJECT = "contract_object";
     public static final String SAVE_TIME_LOGIN = "save_time_login";
     public static final String SAVE_EMPLOYEE_LOGIN = "save_employee_login";
     public static final String SAVE_LOCATION_LOGIN = "save_wifi_ssid_login";
+
+    public static final String DETACH_VALUE_TITLE_ADDRESS = "Address";
+    public static final String DETACH_VALUE_TITLE_HOMETOWN = "Hometown";
+    public static final String DETACH_VALUE_TITLE_ID_NUMBER = "IDnumber";
+    public static final String DETACH_VALUE_TITLE_BIRTHDAY = "Birthday";
+    public static final String DETACH_VALUE_TITLE_NAME = "Name";
 
     private BaseToolbar baseToolbar;
 
@@ -143,7 +152,7 @@ public class BaseActivity extends AppCompatActivity {
         return MyApplication.getInstance();
     }
 
-    public RepositoryRetrofit getMyRetrofit(){
+    public RepositoryRetrofit getMyRetrofit() {
         return RepositoryRetrofit.getInstance();
     }
 
@@ -158,6 +167,14 @@ public class BaseActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, ByteStream);
             byte[] b = ByteStream.toByteArray();
             return Base64.encodeToString(b, Base64.DEFAULT);
+        }
+        return null;
+    }
+
+    public Bitmap convertStringToBitMap(String str_base64) {
+        if (str_base64 != null && !str_base64.equals("")) {
+            byte[] decodedString = Base64.decode(str_base64, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         }
         return null;
     }
@@ -238,4 +255,98 @@ public class BaseActivity extends AppCompatActivity {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
     }
+
+    public Bitmap parseBitmapFromPath(String path, int size) {
+        try {
+            final File file = new File(path);
+            ExifInterface exif = new ExifInterface(path);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), bmOptions);
+            Bitmap rotatedBitmap;
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotatedBitmap = rotateImage(bitmap, 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotatedBitmap = rotateImage(bitmap, 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotatedBitmap = rotateImage(bitmap, 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    rotatedBitmap = bitmap;
+            }
+            float aspectRatio = rotatedBitmap.getWidth() /
+                    (float) rotatedBitmap.getHeight();
+
+            return Bitmap.createScaledBitmap(rotatedBitmap, Math.round(size * aspectRatio), size, false);
+        } catch (Exception err) {
+            return null;
+        }
+    }
+
+    public static File resizeFile(File file) {
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            o.inSampleSize = 6;
+
+            FileInputStream inputStream = new FileInputStream(file);
+            BitmapFactory.decodeStream(inputStream, null, o);
+            inputStream.close();
+
+            final int REQUIRED_SIZE = 60;
+
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            inputStream = new FileInputStream(file);
+
+            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
+            inputStream.close();
+
+            // here i override the original image file
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            assert selectedBitmap != null;
+            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+            Log.e("resizeFile", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
+            outputStream.flush();
+            outputStream.close();
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File parseBitmapToFile(Bitmap bitmap) {
+        try {
+            File f = createImageFile();
+            f.createNewFile();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bmp_data = bos.toByteArray();
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(bmp_data);
+            fos.flush();
+            fos.close();
+
+            return f;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

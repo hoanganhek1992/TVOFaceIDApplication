@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/addEmployee" android:title="Add Employee"/>
-    <item android:id="@+id/listEmployee" android:title="List Employee"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/item_menu_add_employee"
+        android:icon="@drawable/ic_menu_add"
+        android:title="@string/text_add_employee_title"
+        app:showAsAction="ifRoom"
+        tools:ignore="UnusedAttribute" />
+
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/item_menu_list_employee"
+        android:icon="@drawable/ic_menu_list"
+        android:title="@string/text_list_employee_title"
+        app:showAsAction="ifRoom"
+        tools:ignore="UnusedAttribute" />
+
 </menu>
