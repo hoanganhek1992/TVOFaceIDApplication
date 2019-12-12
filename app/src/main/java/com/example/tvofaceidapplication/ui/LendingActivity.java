@@ -27,9 +27,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.tvofaceidapplication.MainActivity;
-import com.example.tvofaceidapplication.model.MyLending;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
+import com.example.tvofaceidapplication.model.MyLending;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -232,15 +232,12 @@ public class LendingActivity extends AppCompatActivity {
 
     public void setData() {
         progressDialog.show();
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String date = df.format(Calendar.getInstance().getTime());
         if (!validate()) {
             progressDialog.dismiss();
             showAlertDialogError();
         } else {
-
-
-            lending = new MyLending("ED" + System.currentTimeMillis(),
+            String timeStamp = System.currentTimeMillis() + "";
+            lending = new MyLending("ED" + timeStamp,
                     name,
                     adress,
                     birth_date,
@@ -248,8 +245,8 @@ public class LendingActivity extends AppCompatActivity {
                     BitMapToString(imgAv),
                     BitMapToString(imgTop),
                     BitMapToString(imgDown),
-                    df.format(Calendar.getInstance().getTime()),
-                    df.format(Calendar.getInstance().getTime()),
+                    timeStamp,
+                    timeStamp,
                     "Thành công"
             );
             myFirebase.addLending(lending, new MyFirebase.LendingCallback() {

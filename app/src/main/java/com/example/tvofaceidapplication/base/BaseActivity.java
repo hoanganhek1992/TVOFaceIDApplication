@@ -31,7 +31,6 @@ import com.example.tvofaceidapplication.model.MyLocation;
 import com.example.tvofaceidapplication.retrofit.RepositoryRetrofit;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
@@ -43,7 +42,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -238,8 +236,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public File createImageFile() throws IOException {
         // Create an image file name
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + System.currentTimeMillis() + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         // Save a file: path for use with ACTION_VIEW intents

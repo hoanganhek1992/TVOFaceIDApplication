@@ -33,9 +33,7 @@ import com.example.tvofaceidapplication.model.MyTimeKeeping;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -208,10 +206,8 @@ public class WifiCheckActivity extends AppCompatActivity {
     }
 
     public void getTimeKeeping() {
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String date = df.format(Calendar.getInstance().getTime());
         keeping.setEmployee_id(id_employee);
-        keeping.setCreated_at(date);
+        keeping.setCreated_at(System.currentTimeMillis() + "");
         keeping.setLocation_id(id_location);
         keeping.setStatus("in");
         myFirebase.addTimeKepping(keeping, new MyFirebase.TimeKeepingCallback() {

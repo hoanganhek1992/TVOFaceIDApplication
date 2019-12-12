@@ -323,12 +323,12 @@ public class HomeActivity extends BaseActivity {
         return new Runnable() {
             @Override
             public void run() {
-                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+
                 MyTimeKeeping timeKeeping = new MyTimeKeeping();
                 timeKeeping.setStatus(status);
                 timeKeeping.setEmployee_id(loadLoginUser().getId());
                 timeKeeping.setLocation_id(loadLoginLocation().getId());
-                timeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
+                timeKeeping.setCreated_at(System.currentTimeMillis() + "");
                 getMyFirebase().addTimeKepping(timeKeeping, new MyFirebase.TimeKeepingCallback() {
                     @Override
                     public void onAddTimeKeepingSuccess() {

@@ -1,8 +1,12 @@
 package com.example.tvofaceidapplication.model;
 
+import android.annotation.SuppressLint;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class MyLending implements Serializable {
@@ -131,19 +135,7 @@ public class MyLending implements Serializable {
     }
 
     public String getCreatedAt_parse() {
-
-        if (this.created_at == null || this.created_at.equals("")) {
-            return "";
-        } else {
-            try {
-                return this.created_at.substring(6, 8) + "/"
-                        + this.created_at.substring(4, 6) + "/"
-                        + this.created_at.substring(0, 4) + " "
-                        + this.created_at.substring(8, 10) + ":"
-                        + this.created_at.substring(10, 12);
-            } catch (Exception e) {
-                return created_at;
-            }
-        }
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return formatter.format(new Date(Long.parseLong(this.created_at)));
     }
 }

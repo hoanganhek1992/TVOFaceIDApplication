@@ -1,11 +1,9 @@
 package com.example.tvofaceidapplication.ui.contract_detail;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -15,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
@@ -23,9 +20,6 @@ import com.example.tvofaceidapplication.base.BaseToolbar;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.model.MyLending;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Objects;
 
 public class ContractDetailActivity extends BaseActivity implements View.OnClickListener {
@@ -123,7 +117,6 @@ public class ContractDetailActivity extends BaseActivity implements View.OnClick
                 byte[] decodedString = Base64.decode(mCurrentLending.getCmnd_1(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 ivCmnd1.setImageBitmap(decodedByte);
-                Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.cmnd_test_1, null);
                 isCmnd1 = true;
             } catch (Exception ignore) {
             }
@@ -179,8 +172,7 @@ public class ContractDetailActivity extends BaseActivity implements View.OnClick
 
     private void onUpdateContract(MyLending lending) {
         mProgressDialog.show();
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        lending.setUpdated_at(df.format(Calendar.getInstance().getTime()));
+        lending.setUpdated_at(System.currentTimeMillis() + "");
         getMyFirebase().addLending(lending, new MyFirebase.LendingCallback() {
             @Override
             public void onAddLendingSuccess() {

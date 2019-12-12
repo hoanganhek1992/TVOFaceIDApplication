@@ -89,9 +89,8 @@ public class AddEmployeeActivity extends BaseActivity {
     }
 
     private void uploadData() {
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         progressDialog.show();
-        MyEmployee myEmployee = new MyEmployee(System.currentTimeMillis() + "", edtName.getText().toString().trim(), imgBase64, df.format(Calendar.getInstance().getTime()));
+        MyEmployee myEmployee = new MyEmployee(System.currentTimeMillis() + "", edtName.getText().toString().trim(), imgBase64, System.currentTimeMillis() + "");
         getMyFirebase().addEmployee(myEmployee, new MyFirebase.AddEmployeeCallback() {
             @Override
             public void onAddEmployeeSuccess() {

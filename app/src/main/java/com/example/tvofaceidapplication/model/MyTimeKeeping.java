@@ -1,6 +1,11 @@
 package com.example.tvofaceidapplication.model;
 
+import android.annotation.SuppressLint;
+
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class MyTimeKeeping {
@@ -47,5 +52,10 @@ public class MyTimeKeeping {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String parseCreated_At() {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return formatter.format(new Date(Long.parseLong(this.created_at)));
     }
 }

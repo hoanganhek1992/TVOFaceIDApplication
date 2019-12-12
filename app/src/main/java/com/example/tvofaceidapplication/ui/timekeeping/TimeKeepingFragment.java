@@ -63,10 +63,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -490,12 +487,11 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
 
     private void showSuccessDialog() {
         //send data to server
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         ((HomeActivity) Objects.requireNonNull(getActivity())).saveLoginSession(mTrueLocation, mTrueEmployee);
         MyTimeKeeping myTimeKeeping = new MyTimeKeeping();
         myTimeKeeping.setEmployee_id(mTrueEmployee.getId());
         myTimeKeeping.setLocation_id(mTrueLocation.getId());
-        myTimeKeeping.setCreated_at(df.format(Calendar.getInstance().getTime()));
+        myTimeKeeping.setCreated_at(System.currentTimeMillis() + "");
         myTimeKeeping.setStatus("in");
 
         ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().addTimeKepping(myTimeKeeping, new MyFirebase.TimeKeepingCallback() {
@@ -562,7 +558,7 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         }
     };
 
-    private void verifyNextItem(){
+    private void verifyNextItem() {
         verifyFaceItem++;
         verifyFaceHandler.post(verifyFaceRunnable);
     }

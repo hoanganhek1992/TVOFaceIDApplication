@@ -1,7 +1,6 @@
 package com.example.tvofaceidapplication.ui.new_lending.addnew;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,9 +32,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -100,8 +96,9 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
 
                 if (checkValidateForm()) {
 
-                    @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-                    MyLending myLending = new MyLending("ED" + System.currentTimeMillis(),
+                    String timeStamp = System.currentTimeMillis() + "";
+
+                    MyLending myLending = new MyLending("ED" + timeStamp,
                             Objects.requireNonNull(edtName.getText()).toString().trim(),
                             Objects.requireNonNull(edtAddress.getText()).toString().trim(),
                             Objects.requireNonNull(edtBirthDate.getText()).toString().trim(),
@@ -110,8 +107,8 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
                             str_face,
                             str_cmnd1,
                             str_cmnd2,
-                            df.format(Calendar.getInstance().getTime()),
-                            df.format(Calendar.getInstance().getTime()),
+                            timeStamp,
+                            timeStamp,
                             "Thành công"
                     );
                     addLendingToDb(myLending);
