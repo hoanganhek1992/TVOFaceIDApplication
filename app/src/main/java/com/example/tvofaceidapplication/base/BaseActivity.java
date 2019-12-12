@@ -31,6 +31,7 @@ import com.example.tvofaceidapplication.model.MyLocation;
 import com.example.tvofaceidapplication.retrofit.RepositoryRetrofit;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
@@ -346,6 +347,19 @@ public class BaseActivity extends AppCompatActivity {
             return f;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public void deleteFolderImgHistory() {
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        assert dir != null;
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            if (children != null) {
+                for (String child : children) {
+                    new File(dir, child).delete();
+                }
+            }
         }
     }
 

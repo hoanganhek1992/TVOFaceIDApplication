@@ -1,16 +1,16 @@
 package com.example.tvofaceidapplication.ui.splash;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.tvofaceidapplication.R;
+import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.ui.home.HomeActivity;
 
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreen extends BaseActivity {
 
     ProgressDialog mProgressDialog;
 
@@ -22,6 +22,11 @@ public class SplashScreen extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Loading user data...");
         mProgressDialog.setCancelable(false);
+
+        if (checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            deleteFolderImgHistory();
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

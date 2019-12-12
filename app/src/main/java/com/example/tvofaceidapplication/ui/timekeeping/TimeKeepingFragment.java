@@ -335,18 +335,6 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
         startLocationUpdates();
     }
 
-    private void setSuccessIcon(TextInputEditText view) {
-        view.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.ic_success, null), null);
-    }
-
-    private void clearIcon(TextInputEditText view) {
-        view.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-    }
-
-    private void setFailIcon(TextInputEditText view) {
-        view.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.ic_clear, null), null);
-    }
-
     // Feature to check Location
 
     private void stopLocationUpdates() {
@@ -555,27 +543,27 @@ public class TimeKeepingFragment extends BaseFragment implements View.OnClickLis
 
                                 getListLocation();
                             } else {
-                                //False -> check next employee
-                                verifyFaceItem++;
-                                verifyFaceHandler.post(verifyFaceRunnable);
+                                verifyNextItem();
                             }
                         }
 
                         @Override
                         public void onCheckIdenticalError(String t) {
                             Log.e("FOREACH_EMPLOYEE", "onCheckIdenticalError " + t);
-                            verifyFaceItem++;
-                            verifyFaceHandler.post(verifyFaceRunnable);
+                            verifyNextItem();
                         }
                     });
                 } else {
-                    verifyFaceHandler.removeCallbacks(verifyFaceRunnable);
-                    verifyFaceItem++;
-                    verifyFaceHandler.post(verifyFaceRunnable);
+                    verifyNextItem();
                 }
             } else {
                 showErrorDialog();
             }
         }
     };
+
+    private void verifyNextItem(){
+        verifyFaceItem++;
+        verifyFaceHandler.post(verifyFaceRunnable);
+    }
 }
