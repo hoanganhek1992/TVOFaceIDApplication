@@ -33,6 +33,7 @@ public class MyFirebase {
     private static final String TABLE_TIME_KEEPING = "time_keeping";
 
     private static final String LENDING_SORT_BY = "updated_at";
+    private static final String EMPLOYEE_SORT_BY = "created_at";
 
     private FirebaseFirestore mDatabase;
 
@@ -60,7 +61,8 @@ public class MyFirebase {
 
 
     public void getEmployee(final GetEmployeeCallback callback) {
-        mDatabase.collection(TABLE_EMPLOYEE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDatabase.collection(TABLE_EMPLOYEE).orderBy(EMPLOYEE_SORT_BY, Query.Direction.DESCENDING)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

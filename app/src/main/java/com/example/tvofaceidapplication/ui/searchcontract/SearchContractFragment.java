@@ -128,9 +128,11 @@ public class SearchContractFragment extends BaseFragment {
             @Override
             public void onGetLendingSuccess(List<MyLending> list) {
                 mProgressDialog.dismiss();
-                myLendingList.clear();
-                myLendingList.addAll(list);
+                myTotalLendingList.clear();
                 myTotalLendingList.addAll(list);
+                myLendingList.clear();
+                myLendingList.addAll(myTotalLendingList);
+
                 mContractAdapter.notifyDataSetChanged();
             }
 
@@ -145,13 +147,19 @@ public class SearchContractFragment extends BaseFragment {
 
     private void searchData(String data) {
         List<MyLending> mList = new ArrayList<>();
-        for (MyLending lending : myTotalLendingList) {
-            if (lending.getId().contains(data)) {
-                mList.add(lending);
+        if (data != null && !data.equals("")) {
+            for (MyLending lending : myTotalLendingList) {
+                if (lending.getId().contains(data)) {
+                    mList.add(lending);
+                }
             }
+            myLendingList.clear();
+            myLendingList.addAll(mList);
+        } else {
+            myLendingList.clear();
+            myLendingList.addAll(myTotalLendingList);
         }
-        myLendingList.clear();
-        myLendingList.addAll(mList);
+
         mContractAdapter.notifyDataSetChanged();
     }
 
@@ -159,11 +167,11 @@ public class SearchContractFragment extends BaseFragment {
         ((HomeActivity) Objects.requireNonNull(getActivity())).getMyFirebase().listenAllLending(new MyFirebase.ListenAllLendingCallback() {
             @Override
             public void onLendingChange(List<MyLending> list) {
-                Log.e("onLendingChange", list.size() +"");
-                myLendingList.clear();
+                Log.e("onLendingChange", list.size() + "");
                 myTotalLendingList.clear();
-                myLendingList.addAll(list);
                 myTotalLendingList.addAll(list);
+                myLendingList.clear();
+                myLendingList.addAll(myTotalLendingList);
                 searchData(edtSearch.getText().toString().trim());
             }
         });
