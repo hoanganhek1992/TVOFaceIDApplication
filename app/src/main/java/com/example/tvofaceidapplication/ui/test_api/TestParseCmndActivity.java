@@ -182,6 +182,5 @@ public class TestParseCmndActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
         }
-
     }
 }

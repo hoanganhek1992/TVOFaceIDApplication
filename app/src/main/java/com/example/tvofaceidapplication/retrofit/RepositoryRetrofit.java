@@ -1,6 +1,5 @@
 package com.example.tvofaceidapplication.retrofit;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.tvofaceidapplication.base.BaseActivity;
@@ -35,7 +34,7 @@ public class RepositoryRetrofit {
         if (myRetrofit == null) {
             myRetrofit = new RepositoryRetrofit();
         }
-        return myRetrofit;
+        return new RepositoryRetrofit();
     }
 
     private RepositoryRetrofit() {
@@ -47,7 +46,40 @@ public class RepositoryRetrofit {
 
         final RequestBody requestFile =
                 RequestBody.create(Objects.requireNonNull(file), MediaType.parse("multipart/form-data"));
-        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
+        Log.e("detachCmnd SIZE", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
+
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData(KEY_DETACH_CMND, file.getName(), requestFile);
+
+        mAPIService.detachCmnd(body).enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(@NotNull Call<Post> call, @NotNull Response<Post> response) {
+                if (response.isSuccessful()) {
+                    List<Result> results = Objects.requireNonNull(response.body()).getResult();
+                    if (results != null && results.size() > 0) {
+                        callback.onDetachSuccess(results.get(0).getPrediction());
+                    } else {
+                        callback.onDetachError("Response result = 0");
+                    }
+                } else {
+                    callback.onDetachError("Can not connect to API…");
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Post> call, @NotNull Throwable t) {
+                Log.e("onFailure", Objects.requireNonNull(t.getMessage()));
+                callback.onDetachError(t.getMessage());
+            }
+        });
+    }
+
+    public void detachCmnd(File resource_1, final DeTachCmndCallback callback) {
+        File file = BaseActivity.resizeFile(resource_1);
+
+        final RequestBody requestFile =
+                RequestBody.create(Objects.requireNonNull(file), MediaType.parse("multipart/form-data"));
+        Log.e("detachCmnd SIZE", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
 
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData(KEY_DETACH_CMND, file.getName(), requestFile);
@@ -76,26 +108,24 @@ public class RepositoryRetrofit {
     }
 
     public void checkIdentical(String path1, String path2, final CheckIdenticalCallback callback) {
-        File file1 = BaseActivity.resizeFile(new File(path1));
+        File f1 = BaseActivity.resizeFile(new File(path1));
 
         final RequestBody requestFile =
-                RequestBody.create(Objects.requireNonNull(file1), MediaType.parse("multipart/form-data"));
+                RequestBody.create(Objects.requireNonNull(f1), MediaType.parse("multipart/form-data"));
 
-        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file1.length())) / 1024 + "");
+        Log.e("checkIdentical SIZE", Integer.parseInt(String.valueOf(f1.length())) / 1024 + "");
 
         MultipartBody.Part body1 =
-                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_1, file1.getName(), requestFile);
+                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_1, f1.getName(), requestFile);
 
-        //File file2 = BaseActivity.resizeFile(new File(path2));
-
-        File file2 = new File(path2);
+        File f2 = BaseActivity.resizeFile(new File(path2));
 
         final RequestBody requestFile2 =
-                RequestBody.create(file2, MediaType.parse("multipart/form-data"));
-        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file2.length())) / 1024 + "");
+                RequestBody.create(Objects.requireNonNull(f2), MediaType.parse("multipart/form-data"));
+        Log.e("checkIdentical SIZE", Integer.parseInt(String.valueOf(f2.length())) / 1024 + "");
 
         MultipartBody.Part body2 =
-                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_2, file2.getName(), requestFile2);
+                MultipartBody.Part.createFormData(KEY_IDENTICAL_FILE_2, f2.getName(), requestFile2);
 
         mAPIService.faceIdentical(body1, body2).enqueue(new Callback<MyFaceCheck>() {
             @Override
@@ -116,7 +146,7 @@ public class RepositoryRetrofit {
     public void checkIdenticalWithResource(File resource_1, File resource_2, final CheckIdenticalCallback callback) {
         File file1 = BaseActivity.resizeFile(resource_1);
         assert file1 != null;
-        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(file1.length())) / 1024 + "");
+        Log.e("checkIdentical SIZE", Integer.parseInt(String.valueOf(file1.length())) / 1024 + "");
         final RequestBody requestFile =
                 RequestBody.create(file1, MediaType.parse("multipart/form-data"));
 
@@ -125,7 +155,7 @@ public class RepositoryRetrofit {
 
         /*File file2 = BaseActivity.resizeFile(resource_2);
         assert file2 != null;*/
-        Log.e("FILE SIZE", Integer.parseInt(String.valueOf(resource_2.length())) / 1024 + "");
+        Log.e("checkIdentical SIZE", Integer.parseInt(String.valueOf(resource_2.length())) / 1024 + "");
         final RequestBody requestFile2 =
                 RequestBody.create(resource_2, MediaType.parse("multipart/form-data"));
 

@@ -46,11 +46,16 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
 
     private static String cmnd1Path = "", cmnd2Path = "", facePath = "";
 
+    private Bitmap bmp_cmnd1, bmp_cmnd2, bmp_face;
+
     private ProgressDialog mProgressDialog;
 
     private MaterialButton mContinueButton;
 
     private TextInputEditText edtName, edtBirthDate, edtCMND, edtAddress;
+
+    private boolean isDetachTrue = false, isDetachFinish = false;
+    private boolean isVerifyTrue = false, isVerifyFinish = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,14 +124,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.new_lending_checking:
                 if (isCmnd1 && isCmnd2 & isFace) {
-                    detachCmnd(cmnd1Path);
-                    /*
-                    llMatched.setVisibility(View.VISIBLE);
-                    edtName.setText(default_name);
-                    edtBirthDate.setText(default_birthdate);
-                    edtCMND.setText(default_cmnd_number);
-                    edtAddress.setText(default_address);
-                    mContinueButton.setEnabled(true);*/
+                    startVerifyImage();
                 } else {
                     Toast.makeText(getApplicationContext(), "Vui lòng thêm hình ảnh trước khi phân tích", Toast.LENGTH_LONG).show();
                 }
@@ -164,7 +162,7 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onAddLendingFail(Exception err) {
                 if (err != null)
-                    Log.e("ERROR", err.getMessage());
+                    Log.e("ERROR", Objects.requireNonNull(err.getMessage()));
                 mProgressDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Không thể thêm dữ liệu vào hệ thống", Toast.LENGTH_LONG).show();
             }
@@ -186,29 +184,39 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
             @Override
             public void run() {
                 if (resultCode == RESULT_OK) {
+                    resetViewVerify();
                     switch (requestCode) {
                         case BaseActivity.CAMERA_VIEW_CMND_1:
-                            Bitmap bmp_cmnd1 = parseBitmapFromPath(cmnd1Path, 240);
+                            bmp_cmnd1 = parseBitmapFromPath(cmnd1Path, 240);
                             if (bmp_cmnd1 != null) {
                                 viewCmnd1.setImageBitmap(bmp_cmnd1);
                                 isCmnd1 = true;
+                                //Parse BMP to Base64 save at DB
                                 str_cmnd1 = convertBitMapToString(bmp_cmnd1);
+                                //Save other size to send api detach data from img
+                                bmp_cmnd1 = parseBitmapFromPath(cmnd1Path, 480);
                             }
                             break;
                         case BaseActivity.CAMERA_VIEW_CMND_2:
-                            Bitmap bmp_cmnd2 = parseBitmapFromPath(cmnd2Path, 180);
+                            bmp_cmnd2 = parseBitmapFromPath(cmnd2Path, 180);
                             if (bmp_cmnd2 != null) {
                                 viewCmnd2.setImageBitmap(bmp_cmnd2);
                                 isCmnd2 = true;
+                                //Parse BMP to Base64 save at DB
                                 str_cmnd2 = convertBitMapToString(bmp_cmnd2);
+                                //Save other size to send api detach data from img
+                                bmp_cmnd2 = parseBitmapFromPath(cmnd2Path, 360);
                             }
                             break;
                         case BaseActivity.CAMERA_VIEW_AVT:
-                            Bitmap bmp_avt = parseBitmapFromPath(facePath, 180);
-                            if (bmp_avt != null) {
-                                viewFace.setImageBitmap(bmp_avt);
+                            bmp_face = parseBitmapFromPath(facePath, 180);
+                            if (bmp_face != null) {
+                                viewFace.setImageBitmap(bmp_face);
                                 isFace = true;
-                                str_face = convertBitMapToString(bmp_avt);
+                                //Parse BMP to Base64 save at DB
+                                str_face = convertBitMapToString(bmp_face);
+                                //Save other size to send api detach data from img
+                                bmp_face = parseBitmapFromPath(facePath, 480);
                             }
                             break;
                     }
@@ -256,19 +264,37 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    public void detachCmnd(String path) {
+    public void startVerifyImage() {
         mProgressDialog.setMessage(getResources().getString(R.string.dialog_processing_image));
         mProgressDialog.show();
-        getMyRetrofit().detachCmnd(path, new RepositoryRetrofit.DeTachCmndCallback() {
+        resetViewVerify();
+        startCheckVerifyValue();
+    }
+
+    public void resetViewVerify() {
+        mContinueButton.setEnabled(false);
+        llMatched.setVisibility(View.INVISIBLE);
+        edtName.setText("");
+        edtBirthDate.setText("");
+        edtCMND.setText("");
+        edtAddress.setText("");
+        isDetachTrue = false;
+        isDetachFinish = false;
+        isVerifyTrue = false;
+        isVerifyFinish = false;
+
+    }
+
+    public void detachCmnd(File f) {
+        getMyRetrofit().detachCmnd(f, new RepositoryRetrofit.DeTachCmndCallback() {
             @Override
             public void onDetachSuccess(List<Prediction> predictions) {
-                mProgressDialog.dismiss();
                 try {
+                    isDetachFinish = true;
                     if (predictions == null || predictions.size() == 0) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_fail_detach_data), Toast.LENGTH_SHORT).show();
-                        Log.e("PRE", getResources().getString(R.string.text_fail_detach_data));
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.text_fail_detach_data), Toast.LENGTH_LONG).show();
+                        isDetachTrue = false;
                     } else {
+                        isDetachTrue = true;
                         for (Prediction pre : predictions) {
                             Log.e("PRE", "Title: " + pre.getLabel());
                             Log.e("PRE", "Ocr_text: " + pre.getOcrText());
@@ -287,22 +313,84 @@ public class NewLendingActivity extends BaseActivity implements View.OnClickList
                                     break;
                             }
                         }
-                        mContinueButton.setEnabled(true);
                     }
                 } catch (Exception ignore) {
+                } finally {
+                    startCheckVerifyValue();
                 }
             }
 
             @Override
             public void onDetachError(String t) {
-                mProgressDialog.dismiss();
+                isDetachFinish = true;
+                isDetachTrue = false;
                 if (t != null) {
                     Log.e("onFailure", Objects.requireNonNull(t));
                     Toast.makeText(getApplicationContext(), t + "", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Lỗi không xác định...", Toast.LENGTH_LONG).show();
                 }
+                startCheckVerifyValue();
             }
         });
     }
+
+    public void faceVerify(File f1, File f2) {
+        getMyRetrofit().checkIdenticalWithResource(f1, f2, new RepositoryRetrofit.CheckIdenticalCallback() {
+            @Override
+            public void onCheckIdenticalSuccess(boolean isIdentical) {
+                Log.e("FOREACH_EMPLOYEE", "onCheckIdenticalSuccess " + isIdentical);
+                if (isIdentical) {
+                    isVerifyFinish = true;
+                    isVerifyTrue = true;
+                } else {
+                    isVerifyFinish = true;
+                    isVerifyTrue = false;
+                }
+                startCheckVerifyValue();
+            }
+
+            @Override
+            public void onCheckIdenticalError(String t) {
+                Log.e("FOREACH_EMPLOYEE", "onCheckIdenticalError " + t);
+                isVerifyFinish = true;
+                isVerifyTrue = false;
+                startCheckVerifyValue();
+            }
+        });
+    }
+
+    public void startCheckVerifyValue() {
+        checkVerifySuccessHandler.removeCallbacks(checkVerifySuccessRunnable);
+        checkVerifySuccessHandler.post(checkVerifySuccessRunnable);
+    }
+
+    private Handler checkVerifySuccessHandler = new Handler();
+    private Runnable checkVerifySuccessRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isVerifyFinish) {
+                faceVerify(parseBitmapToFile(bmp_cmnd1), parseBitmapToFile(bmp_face));
+                return;
+            }
+
+            if (!isDetachFinish) {
+                detachCmnd(parseBitmapToFile(bmp_cmnd1));
+                return;
+            }
+
+            mProgressDialog.dismiss();
+            if (!isVerifyTrue) {
+                Toast.makeText(getApplicationContext(), "Ảnh trên CMND và ảnh gương mặt không khớp", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (!isDetachTrue) {
+                Toast.makeText(getApplicationContext(), "Không thể phân tích dữ liệu từ CMND của bạn", Toast.LENGTH_LONG).show();
+                return;
+            }
+            mContinueButton.setEnabled(true);
+            llMatched.setVisibility(View.VISIBLE);
+
+        }
+    };
 }

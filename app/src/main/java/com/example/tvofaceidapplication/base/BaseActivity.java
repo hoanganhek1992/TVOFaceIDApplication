@@ -320,7 +320,6 @@ public class BaseActivity extends AppCompatActivity {
             assert selectedBitmap != null;
             selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 
-            Log.e("resizeFile", Integer.parseInt(String.valueOf(file.length())) / 1024 + "");
             outputStream.flush();
             outputStream.close();
             return file;
