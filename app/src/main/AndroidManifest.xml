@@ -24,19 +24,30 @@
         android:theme="@style/AppThemeFullScreen"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".ui.test_api.TestFaceCheckActivity" />
-        <activity android:name=".ui.test_api.TestParseCmndActivity">
+        <activity
+            android:name=".ui.test_api.TestFaceCheckActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.test_api.TestParseCmndActivity"
+            android:screenOrientation="portrait">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
         </activity>
-        <activity android:name=".ui.new_lending.finish.FinishLendingActivity" />
-        <activity android:name=".ui.new_lending.addnew.NewLendingActivity" />
-        <activity android:name=".ui.contract_detail.ContractDetailActivity" />
+        <activity
+            android:name=".ui.new_lending.finish.FinishLendingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.new_lending.addnew.NewLendingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.contract_detail.ContractDetailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.splash.SplashScreen"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme_NoStatusBar">
 
             <intent-filter>
@@ -45,13 +56,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".ui.ListEmployeeActivity" />
-        <activity android:name=".ui.AddEmployeeActivity" />
-        <activity android:name=".ui.WifiCheckActivity" />
-        <activity android:name=".ui.TimeKeepingActivity" />
-        <activity android:name=".ui.LendingActivity" />
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ListEmployeeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.AddEmployeeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.WifiCheckActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TimeKeepingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LendingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

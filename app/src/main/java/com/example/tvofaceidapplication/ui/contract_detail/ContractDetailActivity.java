@@ -1,10 +1,14 @@
 package com.example.tvofaceidapplication.ui.contract_detail;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,13 +18,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.tvofaceidapplication.BuildConfig;
 import com.example.tvofaceidapplication.R;
 import com.example.tvofaceidapplication.base.BaseActivity;
 import com.example.tvofaceidapplication.base.BaseToolbar;
 import com.example.tvofaceidapplication.firebase.MyFirebase;
 import com.example.tvofaceidapplication.model.MyLending;
 
-import java.util.Objects;
+import java.io.File;
+import java.io.IOException;
+
+import static androidx.core.content.FileProvider.getUriForFile;
 
 public class ContractDetailActivity extends BaseActivity implements View.OnClickListener {
 
@@ -31,6 +39,8 @@ public class ContractDetailActivity extends BaseActivity implements View.OnClick
     TextView mCusName, mCusBirthDate, mCusPhone, mCusCMND;
 
     ImageView ivCmnd1, ivCmnd2, ivAvt;
+    String cmnd1Base64 = "", cmnd2Base64 = "", avtBase64 = "";
+    private String cmnd1Path = "", cmnd2Path = "", facePath = "";
 
     private boolean isCmnd1 = false, isCmnd2 = false, isFace = false;
 
@@ -190,29 +200,79 @@ public class ContractDetailActivity extends BaseActivity implements View.OnClick
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (data != null && Objects.requireNonNull(data.getExtras()).get("data") != null) {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                switch (requestCode) {
-                    case BaseActivity.CAMERA_VIEW_CMND_1:
-                        ivCmnd1.setImageBitmap(bitmap);
-                        isCmnd1 = true;
-                        mCurrentLending.setCmnd_1(convertBitMapToString(bitmap));
-                        break;
-                    case BaseActivity.CAMERA_VIEW_CMND_2:
-                        ivCmnd2.setImageBitmap(bitmap);
-                        isCmnd2 = true;
-                        mCurrentLending.setCmnd_2(convertBitMapToString(bitmap));
-                        break;
-                    case BaseActivity.CAMERA_VIEW_AVT:
-                        ivAvt.setImageBitmap(bitmap);
-                        isFace = true;
-                        mCurrentLending.setImage(convertBitMapToString(bitmap));
-                        break;
+    public void pickImage(int permission_number) {
+        if (!checkPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, BaseActivity.PERMISSION_WRITE_EXTERNAL_STORAGE);
+        } else {
+            if (!checkPermissions(Manifest.permission.CAMERA)) {
+                requestPermissions(Manifest.permission.CAMERA, BaseActivity.PERMISSION_CAMERA);
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+
+                        switch (permission_number) {
+                            case CAMERA_VIEW_CMND_1:
+                                cmnd1Path = photoFile.getAbsolutePath();
+                                break;
+                            case CAMERA_VIEW_CMND_2:
+                                cmnd2Path = photoFile.getAbsolutePath();
+                                break;
+                            case CAMERA_VIEW_AVT:
+                                facePath = photoFile.getAbsolutePath();
+                                break;
+                        }
+                    } catch (IOException ignored) {
+                    }
+                    if (photoFile != null) {
+                        Uri photoUri = getUriForFile(getApplicationContext(),
+                                BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        startActivityForResult(takePictureIntent, permission_number);
+                    }
                 }
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (resultCode == RESULT_OK) {
+                    switch (requestCode) {
+                        case BaseActivity.CAMERA_VIEW_CMND_1:
+                            Bitmap bmp_cmnd1 = parseBitmapFromPath(cmnd1Path, 240);
+                            if (bmp_cmnd1 != null) {
+                                ivCmnd1.setImageBitmap(bmp_cmnd1);
+                                isCmnd1 = true;
+                                mCurrentLending.setCmnd_1(convertBitMapToString(bmp_cmnd1));
+                            }
+                            break;
+                        case BaseActivity.CAMERA_VIEW_CMND_2:
+                            Bitmap bmp_cmnd2 = parseBitmapFromPath(cmnd2Path, 180);
+                            if (bmp_cmnd2 != null) {
+                                ivCmnd2.setImageBitmap(bmp_cmnd2);
+                                isCmnd2 = true;
+                                mCurrentLending.setCmnd_2(convertBitMapToString(bmp_cmnd2));
+                            }
+                            break;
+                        case BaseActivity.CAMERA_VIEW_AVT:
+                            Bitmap bmp_avt = parseBitmapFromPath(facePath, 180);
+                            if (bmp_avt != null) {
+                                ivAvt.setImageBitmap(bmp_avt);
+                                isFace = true;
+                                mCurrentLending.setImage(convertBitMapToString(bmp_avt));
+                            }
+                            break;
+                    }
+                }
+            }
+        });
+
     }
 }
